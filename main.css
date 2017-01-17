@@ -1,75 +1,47 @@
-/*
- * Detector buttons
- * ================
- * 
- * labels/colors:
- * TGC #ff9966
- * RPC #cc00cc
- * CSC #00ff00
- * MDT-online #00ccff
- * MDT-offline #ffff4d
- # (clear) #A9A9A9
- */
+/* Buttons */
 
-.detectorButton {
+button {
+   background-color: #eeeeee;
+   position: float;
    text-align: center;
    vertical-align: middle;
+   margin: 5px;
+   padding: 5px;
    border-radius: 4px;
+   border-width: 1px;
    font-size: 15px;
 }
 
-.buttonTable {
-   position: absolute;
-   left: 10px;
-   top: 50px;
+/* Form elements */
+
+form {
+   margin: 5px;
 }
 
-/*
- * Detector type text input
- */
-
-/***/
-
-/*
- *
- */
-
-.pos {
-   position: relative;
-   left: 540px;
-   top: 0px;
+input {
+   margin: 5px;
 }
 
-.textbox {
-   position: absolute;
-   left: 800px;
-   top: 38px;
+img {
+   border: 3px solid #ff0000;
 }
 
-.locate {
-   position: absolute;
-   left: 803px;
-   top: 80px;
-   border: 1px solid #A9A9A9;
-   border-radius: 4px;
-}
-.locate:hover {
-   border-color: #A9A9A9;
-   border-radius: 4px
+/* Layout elements */
+
+div {
+   border: 3px solid #5500ff;
+   margin: 5px;
 }
 
-
-.newsearch { position: absolute;
-   left: 943px;
-   top: 80px;
-   border: 1px solid #A9A9A9;
-   border-radius: 4px;
-}
-.newsearch:hover {
-   border-color: #A9A9A9;
-   border-radius: 4px
+div.c1 {
+   float: left;
 }
 
+div.c2 {
+   position: static;
+}
+
+/* Show/hide classes */
 .uncloak {
    display: block;
 }
@@ -77,36 +49,3 @@
 .cloak {
    display: none;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

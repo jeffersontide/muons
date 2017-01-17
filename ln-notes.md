@@ -11,3 +11,5 @@ T 2017-01-17
 >     * Copy the list of relevant detector elements with the cursor for using elsewhere
 > * Could there be an additional user text box for querying a specific eta,phi, instead of using the cursor? Like if the user is told there is a problem at eta=X.XXX and phi=Y.YYY, they could enter this directly instead of getting this approximately correct with the cursor.
 
+* Moved all CSS/javascript to separate files, got rid of jquery
+* Need relative pixel translation of eta-phi
