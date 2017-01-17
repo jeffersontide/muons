@@ -1,0 +1,82 @@
+--- Cosmetic feedback
+
+* The TGC button is bigger than the others? Can they all be the same size?
+
+* Suggest an ordering of MDT, CSC, RPC, TGC
+
+* Could the element names be more human-oriented (e.g. CSC CSS1A06) instead of computer-oriented (cscCSS1A06)?
+
+* Could the detector buttons indicate explicitly if they are clicked/unclicked? Like with a check box, [ ] vs [x]? (I sent the site to a few people without instructions, and nobody knew where to start.)
+
+* Could a "Loading..." text box appear during computationally-expensive steps, when the user waits for 2-3 seconds for the page to load?
+
+* In case the user enters an element name which Locate Element cant locate, could an error message appear, that says something like "Detector element not found!"
+
+* When hovering over the plot, could a text box appear off-plot which shows the eta,phi of the cursor location?
+
+* When hovering over the plot, could the cursor be replaced with crosshairs? 
+
+* The yellow of MDToffl is tough to read.
+
+
+--- Functional feedback
+
+* The locate element feature is difficult to use, since it requires knowing exactly the name of the detector element, and there are thousands of detector elements to remember. There were two suggestions on how to make this more user friendly -- we could do either, or BOTH!
+
+    1. Allow for case-insensitive pattern matching with wildcards. For example, instead of typing cscCSS1A06, the user could write *CSC*A06*, in case they dont remember if the chamber is S or L.
+    2. Have drop-down menus, so that the user doesnt need to type anything. For example:
+
+        [ MDT ]
+          CSC
+          RPC
+          TGC
+
+        ... user chooses CSC, for example ...
+
+        [ cscCSL1A01 ]
+          cscCSL1A03
+          cscCSL1A05
+          cscCSL1A07
+          etc
+
+* Could the Locate Element feature allow for multiple locates simultaneously, using wildcards? Like, if the user entered *CSL*, all the CSL chambers would be highlighted?
+
+* Could clicking on the plot freeze the highlighted detector elements, until the next click (or off-plot click)? Like, ideally, the user could do:
+    * Hover over a given eta,phi location to see the relevant detector elements 
+    * Click to freeze
+    * Copy the list of relevant detector elements with the cursor for using elsewhere
+
+* Could there be an additional user text box for querying a specific eta,phi, instead of using the cursor? Like if the user is told there is a problem at eta=X.XXX and phi=Y.YYY, they could enter this directly instead of getting this approximately correct with the cursor.
+
+* (This is probably a longer term goal) Every beta tester was a big fan of inserting a user image and overlaying the detector elements on top of this. But only the DQ experts (Alex, Karri) thought it was reasonable to assume fixed dimensions mimicking the typical DQ plots we look at. It would be extremely nice if the user could insert any 2D plot of eta,phi, have something resized (either their plot, or the backend detector elements), and then go from there. But okay, this doesnt sound trivial.
+
+* Instead of having two separate buttons for MDT offline and MDT online, could the output column just have both? Maybe something like:
+    mdtBOL2A03 (offline: mdtBOL2A02)
+    mdtBML2A03 (offline: mdtBML2A02)
+    mdtBIL2A03 (offline: mdtBIL2A02)
+
+* How to specify online vs. offline convention in Locate Element? Maybe there could be a [ online | offline ] drop down menu?
+
+* It would be really useful to include a link to the algorithm(s) we have for converting the offline names to online names. Jochen had lots of questions about how we do stuff (e.g. the BME chambers), for example, and if we could just point him to the conversion decision tree (e.g., if MDT EIL, mulitply phi sector by 2 and subtract 1 to get online phi sector), we could save a lot of discussion time.
+
+--- Content suggestions
+
+* The TGC people basically only use the online naming convention, unfortunately. There is some description of the offline numbering here (http://atlas-proj-tgc.web.cern.ch/atlas-proj-tgc/doc/numbering.pdf), but I think we might need to sit down with a TGC person and figure out exactly how to translate from online to offline.
+
+* One of the TGC experts had doubts about some of the boundaries. I guess we could cross-check these just by going to the ROOT file of histograms produced after the particle gun.
+
+* It looks like MDTonl and MDToffl are identical! A bug?
+
+
+---
+Sara's comments:
+
+Here are what seem to me like the nontrivial fixes:
+
+Functional:
+* Resizing dimensions of the grid upon loading a new plot (I mentioned this was one of my priorities to you earlier in the summer, would be much more elegant. But didn't get to do it yet. I know how I would solve this, though.)
+
+*Smarter 'locate element' feature. I basically implemented this feature quickly without giving it flexibility, just the bare bones.
+
+My other comments:
+ MDTonl and MDToffl did end up being identical except for maybe one or two elements. Simply because the particle gun did not register hits from most of the 'translatable' elements, for whatever reason.    

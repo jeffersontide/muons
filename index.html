@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Muon Spectrometer Detector Elements</title>
+<script type="text/javascript" 
+src="ms_single/jquery-1.js"></script>
+
+<!--buttons and overlay positioning & style-->
+<style>
+
+.b0 { position: absolute;
+    left: 40px;
+    top: 50px;	
+	border: 1px solid #ff9966;
+	border-radius: 4px;
+	font-size: 15px;} 
+.b0:hover {border-color: #ff9966; border-radius: 4px;}
+
+.b1 { position: absolute;
+    left: 110px;
+    top: 50px; 
+	border: 1px solid #cc00cc;
+	border-radius: 4px}
+.b1:hover {border-color: #cc00cc; border-radius: 4px}
+
+
+.b2 { position: absolute;
+    left: 180px;
+    top: 50px;
+	border: 1px solid #00ff00;
+	border-radius: 4px} 
+.b2:hover {border-color: #00ff00; border-radius: 4px}
+
+.b3 { position: absolute;
+    left: 250px;
+    top: 50px; 
+	border: 1px solid #00ccff; 
+	border-radius: 4px} 
+.b3:hover {border-color: #00ccff; border-radius: 4px}
+
+.b4 { position: absolute;
+    left: 347px;
+    top: 50px; 
+	border: 1px solid #ffff4d; 
+	border-radius: 4px}
+.b4:hover {border-color: #ffff4d; border-radius: 4px}
+
+.b5 { position: absolute;
+    left: 447px;
+    top: 50px;
+	border: 1px solid #A9A9A9; 
+	border-radius: 4px} 
+.b5:hover {border-color: #A9A9A9; border-radius: 4px} 
+
+.pos { position: relative;
+    left: 540px;
+    top: 0px; } 
+
+.textbox { position: absolute;
+		left: 800px;
+		top: 38px;
+		}
+
+.locate { position: absolute;
+		left: 803px;
+		top: 80px;
+		border: 1px solid #A9A9A9; 
+		border-radius: 4px;
+		}
+.locate:hover {border-color: #A9A9A9; border-radius: 4px} 
+
+
+.newsearch { position: absolute;
+		left: 943px;
+		top: 80px;
+		border: 1px solid #A9A9A9; 
+		border-radius: 4px;
+		}
+.newsearch:hover {border-color: #A9A9A9; border-radius: 4px} 
+
+</style>
+
+<!--mousemove classes style-->
+<style id="uncloak">.uncloak { display: block;}</style>
+<style id="cloak">.cloak { display: none;}</style>
+
+</head>
+<body>
+
+<!--form used in readURL function-->
+<form id="form1" runat="server">
+        <input type='file' id="imgInp" />
+        <img id="foo" style="position:absolute; top:100px; left:0px; width:545px; height:461px" src="ms_single/blanketaphi3.png" />
+</form>
+
+<!--input element used in locate function value="e.g. cscCSS1A02"-->
+<input class="textbox" type="text" id="myText" >
+
+<!--classes used in mousemove function-->
+<div class="uncloak"></div>
+<div class="cloak"></div>
+
+<!--map that stores all detector elements-->
+<map name="map" id="map"></map>
+
+<!--button text-->
+<button id ="tgc" class="b0" >TGC</button>
+<button id ="rpc" class="b1" >RPC</button>
+<button id ="csc" class="b2" >CSC</button>
+<button id ="mdton" class="b3" >MDTonl</button>
+<button id ="mdtoff" class="b4" >MDToffl</button>
+<button id ="clr" class="b5" >Clear Plot</button>
+<button id = "locate" class = "locate">Locate Element</button>
+<button id = "newsearch" class = "newsearch">New Search</button>
+
+</body></html>
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+	//if user chooses to superimpose a plot
+	function readURL(input) {
+		if (input.files && input.files[0]) {
+			var reader = new FileReader();
+						
+			reader.onload = function (e) {
+			    $('#foo').attr('src', e.target.result);
+			}
+						
+			reader.readAsDataURL(input.files[0]);
+		}
+	}
+		
+	$("#imgInp").change(function(){
+		readURL(this);
+	});
+
+	//if user chooses to locate an element's position
+	$("#locate").click(function(){
+		var targetEl = $('input:text').val();
+		console.log("targetEl=" + targetEl);
+
+			var f = (function(){ 
+			var xhr = [];
+			var files = ["ms_single/tgccoords.txt", "ms_single/rpccoords_lowpt.txt", "ms_single/rpccoords_pivot.txt", "ms_single/rpccoords_O.txt","ms_single/csccoords.txt","ms_single/mdtoncoords.txt", "ms_single/mdtoffcoords.txt"];
+			for (i = 0; i < files.length; i++){ 
+				(function (i){ 
+				    xhr[i] = new XMLHttpRequest();
+				    xhr[i].open("GET", files[i], true);
+				    xhr[i].onreadystatechange = function () {
+				        if (xhr[i].readyState == 4 && xhr[i].status == 200) { 
+
+						// get text contents
+						j=70000000000000*i + 1000000000000000000;
+						var coords = xhr[i].responseText.split("\n");
+						coords = coords.filter(Boolean);
+						coords.forEach(function(coord) { 
+								var area = document.createElement("area");
+								area.id = j;
+								area.shape = "rect";
+								if (i == 1 || i == 2) { //RPC BM chamber
+									area.coords = coord.substring(16,coord.length).trim().replace(/ +/g,",");
+								}
+								else {
+									area.coords = coord.substring(10,coord.length).trim().replace(/ +/g,",");  
+								}
+								area.href = "#";
+								var att = document.createAttribute("att");
+
+								if (i == 0 && coord.substring(4,5) == '1') {	
+									    att.value = '#ff9966'; 
+								}
+		 					    if (i == 0 && coord.substring(4,5) == '2') {	
+									    att.value = '#ff6600'; 
+								}
+		 					    if (i == 0 && coord.substring(4,5) == '3') {	
+									    att.value = '#ff0000'; 
+								}
+		 					    if (i == 0 && coord.substring(4,5) == '4') {	
+									    att.value = '#800000'; 
+								}	
+
+		 					    if (i == 1) {	
+									    att.value = '#ff00ff'; 
+								}
+
+		 					    if (i == 2) {	
+									    att.value = '#cc00cc'; 
+								}
+
+		 					    if (i == 3) {	
+									    att.value = '#660066'; 
+								}
+
+		 					    if (i == 4 && coord.substring(5,6) == 'S') {	
+									    att.value = '#00ff00';
+								}
+		 					    if (i == 4 && coord.substring(5,6) == 'L') {	
+									    att.value = '#006600'; 
+								}
+
+		 					    if (i == 5 && coord.substring(4,5) == 'E') {	
+									    att.value = '#00ffff'; 
+								}
+		 					    if (i == 5 && coord.substring(4,5) == 'I') {	
+									    att.value = '#00ccff'; 
+								}
+		 					    if (i == 5 && coord.substring(4,5) == 'M') {	
+									    att.value = '#0066cc'; 
+								}
+		 					    if (i == 5 && coord.substring(4,5) == 'O') {	
+									    att.value = '#003399'; 
+								}
+
+		 					    if (i == 6 && coord.substring(4,5) == 'E') {	
+									    att.value = '#ffff4d'; 
+								}
+		 					    if (i == 6 && coord.substring(4,5) == 'I') {	
+									    att.value = '#ffff00'; 
+								}
+		 					    if (i == 6 && coord.substring(4,5) == 'M') {	
+									    att.value = '#cdcd00'; 
+								}
+		 					    if (i == 6 && coord.substring(4,5) == 'O') {	
+									    att.value = '#8b8b00'; 
+								}
+
+								area.setAttributeNode(att);
+
+								//overlay text is the first term in coords string
+								var div = document.createElement("div");
+								
+								if (i == 1 || i == 2) { // RPC BM chamber
+									div.innerHTML = coord.substring(0,16);
+								}
+
+								else {
+									div.innerHTML = coord.substring(0,10);
+								}
+
+								//increase j
+				 			    j++;
+
+								//append rect and overlay to map
+								document.getElementById("map").appendChild(area);
+
+							if( $('#map').length >0 ) { 
+									var offset = area.coords;
+									var coordarray = offset.split(",");
+									var l = coordarray[0];
+									var t = coordarray[1];
+									var r = coordarray[2];
+									var b = coordarray[3];
+									var ident = area.id; 
+									var w = r - l;
+									var h = b - t;	
+									var bc = att.value;
+									//convert area element to a div
+									var elementDiv = document.createElement("div");
+									elementDiv.style.position = 'absolute';
+									elementDiv.style.left = l + 'px';
+									elementDiv.style.top = t + 'px';					
+									elementDiv.style.border = 'solid';
+									elementDiv.style.borderColor = bc;
+									elementDiv.style.id = ident;									
+									elementDiv.style.display = 'none';
+									elementDiv.style.width = w + 'px';
+									elementDiv.style.height = h + 'px';
+							
+									$("body").append(elementDiv);
+
+								 	if (targetEl == div.innerHTML) {
+										console.log("match=" + div.innerHTML);
+										elementDiv.style.display = "block";
+										console.log(bc);
+									}
+							};							
+						});
+
+					} 
+				};
+				xhr[i].send();
+				})(i); 
+			} 
+			})(); 
+			
+	}); 
+
+ 	$("#newsearch").click(function () {
+			location.reload();
+			$('input:text').val("");
+
+    });
+
+	//if user clicks the tgc button
+	$("#tgc").click(function(){
+
+			var f = (function(){ 
+			var xhr = [];
+			var files = ["ms_single/tgccoords.txt"]; 
+			for (i = 0; i < files.length; i++){ 
+				(function (i){ 
+				    xhr[i] = new XMLHttpRequest();
+				    xhr[i].open("GET", files[i], true);
+				    xhr[i].onreadystatechange = function () {
+				        if (xhr[i].readyState == 4 && xhr[i].status == 200) { 
+
+						// get text contents
+						j=i;
+						var coords = xhr[i].responseText.split("\n");
+						coords = coords.filter(Boolean) 
+						coords.forEach(function(coord) { 
+								var area = document.createElement("area");
+								area.id = j;
+								area.coords = coord.substring(10,coord.length).trim().replace(/ +/g,",");  
+								area.href = "#";
+								var att = document.createAttribute("att");
+								
+								if (i == 0 && coord.substring(4,5) == '1') {	
+									    att.value = '#ff9966'; 
+								}
+		 					    if (i == 0 && coord.substring(4,5) == '2') {	
+									    att.value = '#ff6600'; 
+								}
+		 					    if (i == 0 && coord.substring(4,5) == '3') {	
+									    att.value = '#ff0000'; 
+								}
+		 					    if (i == 0 && coord.substring(4,5) == '4') {	
+									    att.value = '#800000'; 
+								}	
+								area.setAttributeNode(att);
+
+								//overlay text is the first term in coords string
+								var div = document.createElement("div");
+								div.className = "pos cloak";
+								div.id ="overlay"+j;
+								div.innerHTML = coord.substring(0,10);
+							
+		 					    if (i == 0 && coord.substring(4,5) == '1') {	
+									    div.style.color = '#ff9966';
+								}
+		 					    if (i == 0 && coord.substring(4,5) == '2') {	
+									    div.style.color = '#ff6600';
+								}
+		 					    if (i == 0 && coord.substring(4,5) == '3') {	
+									    div.style.color = '#ff0000';
+								}
+		 					    if (i == 0 && coord.substring(4,5) == '4') {	
+									    div.style.color = '#800000';
+								}
+							
+								//increase j
+				 			    j++;
+
+								//append rect and overlay to map
+								document.getElementById("map").appendChild(area);
+								document.getElementById("map").appendChild(div);
+					  		});
+
+							//display detector elements and overlay text with mouseover
+							var hoveredElements = [];
+							var elementPositions = [];
+
+							if( $('#map').length >0 ) { 
+								$('#map area').each(function() {
+									var offset = this.coords;
+									var coordarray = offset.split(",");
+									var l = coordarray[0];
+									var t = coordarray[1];
+									var r = coordarray[2];
+									var b = coordarray[3];
+									var ident = this.id; 
+									var w = r - l;
+									var h = b - t;	
+									var bc = $(this).attr('att');
+									//convert each area element to a div
+									var elementDiv = $('<div class="area"></div>')
+										.css({position: 'absolute', left: l + 'px', top: t + 'px', border: 'solid', borderColor: bc, id: ident}). 
+										width(w).height(h);								
+
+									$("body").append(elementDiv);
+									elementDiv.addClass("cloak");	
+								
+									elementPositions.push({ 
+										element: elementDiv,
+										top: t, 
+										bottom: b, 
+										left: l, 
+										right: r, 
+										id: ident,
+									});
+
+					   			}); //all detector elements are pushed into elementPositions array
+
+								$("body").mousemove(function(e) { //if user moves their mouse over a pixel
+
+									$('#uncloak').attr('disabled', 'true'); 
+									hoveredElements.forEach( function(item) { //hide all hoveredElements
+										item.overlay.removeClass("uncloak");
+										item.overlay.addClass("cloak");
+										item.element.removeClass("uncloak");
+										item.element.addClass("cloak");
+									});
+									$('#uncloak').attr('disabled', 'false');
+							
+									hoveredElements = []; //reset hoveredElements
+									var clientX = e.clientX;
+									var clientY = e.clientY;
+									var xPosition = e.pageX;
+									var yPosition = e.pageY;
+						
+									for (var ie = 0; ie < elementPositions.length; ie++) { 
+										if (xPosition >= elementPositions[ie].left && 
+										  xPosition <= elementPositions[ie].right &&
+										  yPosition >= elementPositions[ie].top &&
+										  yPosition <= elementPositions[ie].bottom) {
+											// The mouse is within the detector element's boundaries
+										  	hoveredElements.push({ //push it into hoveredElements
+												overlay: $('#overlay'+elementPositions[ie].id),
+												element: elementPositions[ie].element,
+				 							});
+										} 
+									} 
+									hoveredElements.forEach( function(item) { //show all hoveredElements
+										item.overlay.removeClass("cloak");
+										item.overlay.addClass("uncloak");
+										item.element.removeClass("cloak");
+										item.element.addClass("uncloak");
+									});
+						    	}); 
+					
+
+						}; 
+
+					}
+				};
+				xhr[i].send();
+				})(i); 
+			} 
+			})(); 
+			
+	}); 
+
+	$("#rpc").click(function(){
+
+			var f = (function(){ 
+			var xhr = [];
+			var files = ["ms_single/rpccoords_lowpt.txt", "ms_single/rpccoords_pivot.txt", "ms_single/rpccoords_O.txt"]; 
+			for (i = 0; i < files.length; i++){ 
+				(function (i){ 
+				    xhr[i] = new XMLHttpRequest();
+				    xhr[i].open("GET", files[i], true);
+				    xhr[i].onreadystatechange = function () {
+				        if (xhr[i].readyState == 4 && xhr[i].status == 200) { 
+
+						j=50000000*i + 1000000000; // files.length > 1 => let j counter be large so it won't interfere with the other chamber counters
+						var coords = xhr[i].responseText.split("\n");
+						coords = coords.filter(Boolean);
+						coords.forEach(function(coord) { 
+								var area = document.createElement("area");
+								area.id = j;
+								area.shape = "rect";
+								if (i == 2) { //BO chamber
+									area.coords = coord.substring(10,coord.length).trim().replace(/ +/g,",");
+								}
+								else { //BM chamber
+									area.coords = coord.substring(16,coord.length).trim().replace(/ +/g,",");
+								}
+								area.href = "#";
+								var att = document.createAttribute("att");
+
+		 					    if (i == 0) {	
+									    att.value = '#ff00ff'; 
+								}
+		 					    if (i == 1) {	
+									    att.value = '#cc00cc'; 
+								}
+		 					    if (i == 2) {	
+									    att.value = '#660066'; 
+								}
+
+								area.setAttributeNode(att);
+
+						
+								var div = document.createElement("div");
+								div.className = "pos cloak";
+								div.id ="overlay"+j;
+				
+								if (i == 2) { //BO chamber
+									div.innerHTML = coord.substring(0,10);
+								}
+								else { //BM chamber
+									div.innerHTML = coord.substring(0,16);
+								}
+
+		 					    if (i == 0) {	
+									    div.style.color = '#ff00ff'; 
+								}
+		 					    if (i == 1) {	
+									    div.style.color = '#cc00cc'; 
+								}
+		 					    if (i == 2) {	
+									    div.style.color = '#660066'; 
+								}
+							
+				 			    j++;
+
+								document.getElementById("map").appendChild(area);
+								document.getElementById("map").appendChild(div);
+					  		});
+							var hoveredElements = [];
+							var elementPositions = [];
+
+							if( $('#map').length >0 ) { 
+								$('#map area').each(function() {
+									var offset = this.coords;
+									var coordarray = offset.split(",");
+									var l = coordarray[0];
+									var t = coordarray[1];
+									var r = coordarray[2];
+									var b = coordarray[3];
+									var ident = this.id; 
+									var w = r - l;
+									var h = b - t;	
+									var bc = $(this).attr('att');
+									var elementDiv = $('<div class="area"></div>')
+										.css({position: 'absolute', left: l + 'px', top: t + 'px', border: 'solid', borderColor: bc, id: ident}). 
+										width(w).height(h);								
+
+									$("body").append(elementDiv);
+									elementDiv.addClass("cloak");	
+								
+									elementPositions.push({ 
+										element: elementDiv,
+										top: t, 
+										bottom: b, 
+										left: l, 
+										right: r, 
+										id: ident,
+									});
+					   			}); 
+
+								$("body").mousemove(function(e) {
+
+									$('#uncloak').attr('disabled', 'true');
+									hoveredElements.forEach( function(item) {
+										item.overlay.removeClass("uncloak");
+										item.overlay.addClass("cloak");
+										item.element.removeClass("uncloak");
+										item.element.addClass("cloak");
+									});
+									$('#uncloak').attr('disabled', 'false');
+							
+									hoveredElements = [];
+									var clientX = e.clientX;
+									var clientY = e.clientY;
+									var xPosition = e.pageX;
+									var yPosition = e.pageY;
+						
+									for (var ie = 0; ie < elementPositions.length; ie++) { 
+										if (xPosition >= elementPositions[ie].left && 
+										  xPosition <= elementPositions[ie].right &&
+										  yPosition >= elementPositions[ie].top &&
+										  yPosition <= elementPositions[ie].bottom) {
+										  	hoveredElements.push({ 
+												overlay: $('#overlay'+elementPositions[ie].id),
+												element: elementPositions[ie].element,
+				 							});
+										} 
+									} 
+									hoveredElements.forEach( function(item) {
+										item.overlay.removeClass("cloak");
+										item.overlay.addClass("uncloak");
+										item.element.removeClass("cloak");
+										item.element.addClass("uncloak");
+									});
+						    	});
+					
+
+						};
+
+					} 
+				}; 
+				xhr[i].send();
+				})(i); 
+			} 
+			})(); 
+			
+	}); 	
+
+	$("#csc").click(function(){
+
+			var f = (function(){ 
+			var xhr = [];
+			var files = ["ms_single/csccoords.txt"]; 
+			for (i = 0; i < files.length; i++){ 
+				(function (i){ 
+				    xhr[i] = new XMLHttpRequest();
+				    xhr[i].open("GET", files[i], true);
+				    xhr[i].onreadystatechange = function () {
+				        if (xhr[i].readyState == 4 && xhr[i].status == 200) { 
+
+						j=i + 200000;
+						var coords = xhr[i].responseText.split("\n");
+						coords = coords.filter(Boolean);
+						coords.forEach(function(coord) { 
+								var area = document.createElement("area");
+								area.id = j;
+								area.shape = "rect";
+								area.coords = coord.substring(10,coord.length).trim().replace(/ +/g,","); 
+								area.href = "#";
+								var att = document.createAttribute("att");
+ 
+		 					    if (i == 0 && coord.substring(5,6) == 'S') {	
+									    att.value = '#00ff00';
+								}
+		 					    if (i == 0 && coord.substring(5,6) == 'L') {	
+									    att.value = '#006600'; 
+								}
+
+								area.setAttributeNode(att);
+
+								var div = document.createElement("div");
+								div.className = "pos cloak";
+								div.id ="overlay"+j;
+								div.innerHTML = coord.substring(0,10);
+
+	 							if (i == 0 && coord.substring(5,6) == 'S') {	
+									    div.style.color = '#00ff00';
+								}
+		 					    if (i == 0 && coord.substring(5,6) == 'L') {	
+									    div.style.color = '#006600';
+								}
+
+				 			    j++;
+
+								document.getElementById("map").appendChild(area);
+								document.getElementById("map").appendChild(div);
+					  		});
+							var hoveredElements = [];
+							var elementPositions = [];
+
+							if( $('#map').length >0 ) { 
+								$('#map area').each(function() {
+									var offset = this.coords;
+									var coordarray = offset.split(",");
+									var l = coordarray[0];
+									var t = coordarray[1];
+									var r = coordarray[2];
+									var b = coordarray[3];
+									var ident = this.id;
+									var w = r - l;
+									var h = b - t;	
+									var bc = $(this).attr('att');
+									var elementDiv = $('<div class="area"></div>')
+										.css({position: 'absolute', left: l + 'px', top: t + 'px', border: 'solid', borderColor: bc, id: ident}). 
+										width(w).height(h);								
+
+									$("body").append(elementDiv);
+									elementDiv.addClass("cloak");	
+								
+									elementPositions.push({ 
+										element: elementDiv,
+										top: t, 
+										bottom: b, 
+										left: l, 
+										right: r, 
+										id: ident,
+									});
+					   			});
+
+								$("body").mousemove(function(e) {
+
+									$('#uncloak').attr('disabled', 'true');
+									hoveredElements.forEach( function(item) {
+										item.overlay.removeClass("uncloak");
+										item.overlay.addClass("cloak");
+										item.element.removeClass("uncloak");
+										item.element.addClass("cloak");
+									});
+									$('#uncloak').attr('disabled', 'false');
+							
+									hoveredElements = [];
+									var clientX = e.clientX;
+									var clientY = e.clientY;
+									var xPosition = e.pageX;
+									var yPosition = e.pageY;
+						
+									for (var ie = 0; ie < elementPositions.length; ie++) { 
+										if (xPosition >= elementPositions[ie].left && 
+										  xPosition <= elementPositions[ie].right &&
+										  yPosition >= elementPositions[ie].top &&
+										  yPosition <= elementPositions[ie].bottom) {
+										  	hoveredElements.push({ 
+												overlay: $('#overlay'+elementPositions[ie].id),
+												element: elementPositions[ie].element,
+				 							});
+										} 
+									}
+									hoveredElements.forEach( function(item) {
+										item.overlay.removeClass("cloak");
+										item.overlay.addClass("uncloak");
+										item.element.removeClass("cloak");
+										item.element.addClass("uncloak");
+									});
+						    	}); 
+					
+
+						};
+
+					} 
+				}; 
+				xhr[i].send();
+				})(i); 
+			} 
+			})(); 
+			
+	}); 
+
+	$("#mdton").click(function(){
+
+			var f = (function(){ 
+			var xhr = [];
+			var files = ["ms_single/mdtoncoords.txt"]; 
+			for (i = 0; i < files.length; i++){ 
+				(function (i){ 
+				    xhr[i] = new XMLHttpRequest();
+				    xhr[i].open("GET", files[i], true);
+				    xhr[i].onreadystatechange = function () {
+				        if (xhr[i].readyState == 4 && xhr[i].status == 200) { 
+
+						j=i + 300000;
+						var coords = xhr[i].responseText.split("\n");
+						coords = coords.filter(Boolean);
+						coords.forEach(function(coord) { 
+								var area = document.createElement("area");
+								area.id = j;
+								area.shape = "rect";
+								area.coords = coord.substring(10,coord.length).trim().replace(/ +/g,",");
+								area.href = "#";
+								var att = document.createAttribute("att");
+ 
+		 					    if (i == 0 && coord.substring(4,5) == 'E') {	
+									    att.value = '#00ffff'; 
+								}
+		 					    if (i == 0 && coord.substring(4,5) == 'I') {	
+									    att.value = '#00ccff'; 
+								}
+		 					    if (i == 0 && coord.substring(4,5) == 'M') {	
+									    att.value = '#0066cc'; 
+								}
+		 					    if (i == 0 && coord.substring(4,5) == 'O') {	
+									    att.value = '#003399'; 
+								}
+
+								area.setAttributeNode(att);
+
+								var div = document.createElement("div");
+								div.className = "pos cloak";
+								div.id ="overlay"+j;
+								div.innerHTML = coord.substring(0,10);
+
+		 					    if (i == 0 && coord.substring(4,5) == 'E') {	
+									    div.style.color = '#00ffff';
+								}
+		 					    if (i == 0 && coord.substring(4,5) == 'I') {	
+									    div.style.color = '#00ccff';
+								}
+		 					    if (i == 0 && coord.substring(4,5) == 'M') {	
+									    div.style.color = '#0066cc';
+								}
+		 					    if (i == 0 && coord.substring(4,5) == 'O') {	
+									    div.style.color = '#003399';
+								}
+							
+				 			    j++;
+
+								document.getElementById("map").appendChild(area);
+								document.getElementById("map").appendChild(div);
+					  		});
+							var hoveredElements = [];
+							var elementPositions = [];
+
+							if( $('#map').length >0 ) { 
+								$('#map area').each(function() {
+									var offset = this.coords;
+									var coordarray = offset.split(",");
+									var l = coordarray[0];
+									var t = coordarray[1];
+									var r = coordarray[2];
+									var b = coordarray[3];
+									var ident = this.id; 
+									var w = r - l;
+									var h = b - t;	
+									var bc = $(this).attr('att');
+									var elementDiv = $('<div class="area"></div>')
+										.css({position: 'absolute', left: l + 'px', top: t + 'px', border: 'solid', borderColor: bc, id: ident}). 
+										width(w).height(h);								
+
+									$("body").append(elementDiv);
+									elementDiv.addClass("cloak");	
+								
+									elementPositions.push({ 
+										element: elementDiv,
+										top: t, 
+										bottom: b, 
+										left: l, 
+										right: r, 
+										id: ident,
+									});
+					   			}); 
+
+								$("body").mousemove(function(e) {
+
+									$('#uncloak').attr('disabled', 'true');
+									hoveredElements.forEach( function(item) {
+										item.overlay.removeClass("uncloak");
+										item.overlay.addClass("cloak");
+										item.element.removeClass("uncloak");
+										item.element.addClass("cloak");
+									});
+									$('#uncloak').attr('disabled', 'false');
+							
+									hoveredElements = [];
+									var clientX = e.clientX;
+									var clientY = e.clientY;
+									var xPosition = e.pageX;
+									var yPosition = e.pageY;
+						
+									for (var ie = 0; ie < elementPositions.length; ie++) { 
+										if (xPosition >= elementPositions[ie].left && 
+										  xPosition <= elementPositions[ie].right &&
+										  yPosition >= elementPositions[ie].top &&
+										  yPosition <= elementPositions[ie].bottom) {
+										  	hoveredElements.push({ 
+												overlay: $('#overlay'+elementPositions[ie].id),
+												element: elementPositions[ie].element,
+				 							});
+										} 
+									} 
+									hoveredElements.forEach( function(item) {
+										item.overlay.removeClass("cloak");
+										item.overlay.addClass("uncloak");
+										item.element.removeClass("cloak");
+										item.element.addClass("uncloak");
+									});
+						    	});
+					
+
+						}; 
+
+					} 
+				}; 
+				xhr[i].send();
+				})(i); 
+			} 
+			})(); 
+			
+	}); 
+
+	$("#mdtoff").click(function(){
+
+			var f = (function(){ 
+			var xhr = [];
+			var files = ["ms_single/mdtoffcoords.txt"]; 
+			for (i = 0; i < files.length; i++){ 
+				(function (i){ 
+				    xhr[i] = new XMLHttpRequest();
+				    xhr[i].open("GET", files[i], true);
+				    xhr[i].onreadystatechange = function () {
+				        if (xhr[i].readyState == 4 && xhr[i].status == 200) { 
+
+						j=i + 400000;
+						var coords = xhr[i].responseText.split("\n");
+						coords = coords.filter(Boolean);
+						coords.forEach(function(coord) { 
+								var area = document.createElement("area");
+								area.id = j;
+								area.shape = "rect";
+								area.coords = coord.substring(10,coord.length).trim().replace(/ +/g,",");
+								area.href = "#";
+								var att = document.createAttribute("att");
+ 
+		 					    if (i == 0 && coord.substring(4,5) == 'E') {	
+									    att.value = '#ffff4d'; 
+								}
+		 					    if (i == 0 && coord.substring(4,5) == 'I') {	
+									    att.value = '#ffff00'; 
+								}
+		 					    if (i == 0 && coord.substring(4,5) == 'M') {	
+									    att.value = '#cdcd00'; 
+								}
+		 					    if (i == 0 && coord.substring(4,5) == 'O') {	
+									    att.value = '#8b8b00'; 
+								}
+
+								area.setAttributeNode(att);
+
+								var div = document.createElement("div");
+								div.className = "pos cloak";
+								div.id ="overlay"+j;
+								div.innerHTML = coord.substring(0,10);
+
+		 					    if (i == 0 && coord.substring(4,5) == 'E') {	
+									    div.style.color = '#ffff4d';
+								}
+		 					    if (i == 0 && coord.substring(4,5) == 'I') {	
+									    div.style.color = '#ffff00';
+								}
+		 					    if (i == 0 && coord.substring(4,5) == 'M') {	
+									    div.style.color = '#cdcd00';
+								}
+		 					    if (i == 0 && coord.substring(4,5) == 'O') {	
+									    div.style.color = '#8b8b00';
+								}
+
+				 			    j++;
+
+								document.getElementById("map").appendChild(area);
+								document.getElementById("map").appendChild(div);
+					  		});
+							var hoveredElements = [];
+							var elementPositions = [];
+
+							if( $('#map').length >0 ) { 
+								$('#map area').each(function() {
+									var offset = this.coords;
+									var coordarray = offset.split(",");
+									var l = coordarray[0];
+									var t = coordarray[1];
+									var r = coordarray[2];
+									var b = coordarray[3];
+									var ident = this.id; 
+									var w = r - l;
+									var h = b - t;	
+									var bc = $(this).attr('att');
+									var elementDiv = $('<div class="area"></div>')
+										.css({position: 'absolute', left: l + 'px', top: t + 'px', border: 'solid', borderColor: bc, id: ident}). 
+										width(w).height(h);								
+
+									$("body").append(elementDiv);
+									elementDiv.addClass("cloak");	
+								
+									elementPositions.push({ 
+										element: elementDiv,
+										top: t, 
+										bottom: b, 
+										left: l, 
+										right: r, 
+										id: ident,
+									});
+					   			}); 
+
+								$("body").mousemove(function(e) {
+
+									$('#uncloak').attr('disabled', 'true');
+									hoveredElements.forEach( function(item) {
+										item.overlay.removeClass("uncloak");
+										item.overlay.addClass("cloak");
+										item.element.removeClass("uncloak");
+										item.element.addClass("cloak");
+									});
+									$('#uncloak').attr('disabled', 'false');
+							
+									hoveredElements = [];
+									var clientX = e.clientX;
+									var clientY = e.clientY;
+									var xPosition = e.pageX;
+									var yPosition = e.pageY;
+						
+									for (var ie = 0; ie < elementPositions.length; ie++) { 
+										if (xPosition >= elementPositions[ie].left && 
+										  xPosition <= elementPositions[ie].right &&
+										  yPosition >= elementPositions[ie].top &&
+										  yPosition <= elementPositions[ie].bottom) {
+										  	hoveredElements.push({ 
+												overlay: $('#overlay'+elementPositions[ie].id),
+												element: elementPositions[ie].element,
+				 							});
+										} 
+									} 
+									hoveredElements.forEach( function(item) {
+										item.overlay.removeClass("cloak");
+										item.overlay.addClass("uncloak");
+										item.element.removeClass("cloak");
+										item.element.addClass("uncloak");
+									});
+						    	});
+					
+
+						}; 
+
+					}
+				}; 
+				xhr[i].send();
+				})(i); 
+			} 
+			})(); 
+			
+	}); 
+
+
+
+	$("#clr").click(function(){
+		location.reload();
+	});
+});
+</script>

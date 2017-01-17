@@ -1,0 +1,1 @@
+displaycoordsingle.C generates a .txt file with stationname and HTML rect coords for each histogram in the input .root file specified. These .txt files are later read into ms_single.html with Javascript.
