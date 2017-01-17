@@ -1,115 +1,39 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Muon Spectrometer Detector Elements</title>
-<script type="text/javascript" 
-src="ms_single/jquery-1.js"></script>
+   <title>Muon Spectrometer Detector Elements</title>
 
-<!--buttons and overlay positioning & style-->
-<style>
+   <!-- CSS stylesheet -->
+   <link rel="stylesheet" type="text/css" href="main.css">
 
-.b0 { position: absolute;
-    left: 40px;
-    top: 50px;	
-	border: 1px solid #ff9966;
-	border-radius: 4px;
-	font-size: 15px;} 
-.b0:hover {border-color: #ff9966; border-radius: 4px;}
-
-.b1 { position: absolute;
-    left: 110px;
-    top: 50px; 
-	border: 1px solid #cc00cc;
-	border-radius: 4px}
-.b1:hover {border-color: #cc00cc; border-radius: 4px}
-
-
-.b2 { position: absolute;
-    left: 180px;
-    top: 50px;
-	border: 1px solid #00ff00;
-	border-radius: 4px} 
-.b2:hover {border-color: #00ff00; border-radius: 4px}
-
-.b3 { position: absolute;
-    left: 250px;
-    top: 50px; 
-	border: 1px solid #00ccff; 
-	border-radius: 4px} 
-.b3:hover {border-color: #00ccff; border-radius: 4px}
-
-.b4 { position: absolute;
-    left: 347px;
-    top: 50px; 
-	border: 1px solid #ffff4d; 
-	border-radius: 4px}
-.b4:hover {border-color: #ffff4d; border-radius: 4px}
-
-.b5 { position: absolute;
-    left: 447px;
-    top: 50px;
-	border: 1px solid #A9A9A9; 
-	border-radius: 4px} 
-.b5:hover {border-color: #A9A9A9; border-radius: 4px} 
-
-.pos { position: relative;
-    left: 540px;
-    top: 0px; } 
-
-.textbox { position: absolute;
-		left: 800px;
-		top: 38px;
-		}
-
-.locate { position: absolute;
-		left: 803px;
-		top: 80px;
-		border: 1px solid #A9A9A9; 
-		border-radius: 4px;
-		}
-.locate:hover {border-color: #A9A9A9; border-radius: 4px} 
-
-
-.newsearch { position: absolute;
-		left: 943px;
-		top: 80px;
-		border: 1px solid #A9A9A9; 
-		border-radius: 4px;
-		}
-.newsearch:hover {border-color: #A9A9A9; border-radius: 4px} 
-
-</style>
-
-<!--mousemove classes style-->
-<style id="uncloak">.uncloak { display: block;}</style>
-<style id="cloak">.cloak { display: none;}</style>
-
+   <!-- all Javascript functions -->
+   <script type="text/javascript" src="main.js"></script>
 </head>
-<body>
 
-<!--form used in readURL function-->
+<body onload="init();">
+
+<!-- form used in readURL function -->
 <form id="form1" runat="server">
-        <input type='file' id="imgInp" />
-        <img id="foo" style="position:absolute; top:100px; left:0px; width:545px; height:461px" src="ms_single/blanketaphi3.png" />
+   <input type='file' id="imgInp" />
+   <img id="foo" style="position:absolute; top:100px; left:0px; width:545pfx; height:461px" src="ms_single/blanketaphi3.png" />
 </form>
 
-<!--input element used in locate function value="e.g. cscCSS1A02"-->
-<input class="textbox" type="text" id="myText" >
-
-<!--classes used in mousemove function-->
-<div class="uncloak"></div>
-<div class="cloak"></div>
-
-<!--map that stores all detector elements-->
+<!-- map that stores all detector elements -->
 <map name="map" id="map"></map>
 
-<!--button text-->
-<button id ="tgc" class="b0" >TGC</button>
-<button id ="rpc" class="b1" >RPC</button>
-<button id ="csc" class="b2" >CSC</button>
-<button id ="mdton" class="b3" >MDTonl</button>
-<button id ="mdtoff" class="b4" >MDToffl</button>
-<button id ="clr" class="b5" >Clear Plot</button>
+<!-- buttons -->
+<table class="buttonTable">
+   <tr>
+      <td><button id="tgc" class="detectorButton">TGC</button></td>
+      <td><button id="rpc" class="detectorButton">RPC</button></td>
+      <td><button id="csc" class="detectorButton">CSC</button></td>
+      <td><button id="mdton" class="detectorButton">MDT on</button></td>
+      <td><button id="mdtoff" class="detectorButton">MDT off</button></td>
+      <td><button id="clr" class="detectorButton">Clear</button></td>
+   </tr>
+</table>
+
 <button id = "locate" class = "locate">Locate Element</button>
 <button id = "newsearch" class = "newsearch">New Search</button>
 
