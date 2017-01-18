@@ -21,3 +21,4 @@ TODO
 3. same should happen (as in 2) when a specific eta-phi coordinate is given
 4. make real plots...including vertical/horizontal guide bars
 5. "show all locations of xx detector type"
+6. ??? how to superimpose plot images, e.g. select matching corners
