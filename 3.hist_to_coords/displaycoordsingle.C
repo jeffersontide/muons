@@ -36,10 +36,12 @@ void displaycoord() {
       double lly, uly;
       lly = h->GetYaxis()->GetBinCenter(h->FindFirstBinAbove(0,2));
       uly = h->GetYaxis()->GetBinCenter(h->FindLastBinAbove(0,2));
-      //cout << "lower limit x= " << llx << endl;
-      //cout << "lower limit y= " << lly << endl;
-      //cout << "upper limit x= " << ulx << endl; 
-      //cout << "upper limit y= " << uly << endl; 
+
+      cout << "lower limit x= " << llx << endl;
+      cout << "lower limit y= " << lly << endl;
+      cout << "upper limit x= " << ulx << endl;
+      cout << "upper limit y= " << uly << endl;
+
       xmin.push_back(llx);
       ymin.push_back(lly);
       xmax.push_back(ulx);
@@ -77,13 +79,20 @@ void displaycoord() {
  	ipxmax = ceil(xpxmax);
  	ipymin = floor(xpymin);
  	ipymax = ceil(xpymax);
+
+   /***/
+
+   
+
+
+
 	fprintf(fp, "%s %3d %3d %3d %3d \n", sname.c_str(), ipxmin, ipymax, ipxmax, ipymin); 
    } 
 }
 
 
 int
-main() 
+displaycoordsingle()
 {
 TApplication *a = new TApplication("a", 0, 0);
 displaycoord();

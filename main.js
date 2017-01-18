@@ -11,25 +11,7 @@ function init() {
 
       // Set detector button options
       if (button.className == "detectorButton") {
-         // Set colors
-         switch (button.id) {
-            case "tgc":
-               button.style.borderColor = "#ff9966";
-               break;
-            case "rpc":
-               button.style.borderColor = "#cc00cc";
-               break;
-            case "csc":
-               button.style.borderColor = "#00ff00";
-               break;
-            case "mdton":
-               button.style.borderColor = "#00ccff";
-               break;
-            case "mdtoff":
-               button.style.borderColor = "#ffff4d";
-               break;
-         }
-
+         button.style.borderColor = rectangleColor(button.id);
          button.selected = false;
          button.loaded = false;
          button.onclick = toggleDetector;
@@ -57,14 +39,18 @@ function init() {
    // ugh datastructures
    function Dataset(path) {
       this.path = path;
-      this.data = [];
-      this.rect = "";
+      this.data = {};
+         // detectorElementID : rect (rect.coords to find coordinates)
+      this.button = null; /***/
    }
 
    // Plotting the mouse
-   document.getElementById("foo").onmousemove = updateMouse;
+   document.getElementById("map").onmousemove = updateMouse;
    window.mouseX = 0; // relative to the NW corner of image
    window.mouseY = 0;
+
+   // Handles for currently visible rectangles
+   window.visible = [];
 
    // Set aside some tables
    window.detectorData = {
@@ -75,9 +61,6 @@ function init() {
       'mdton' : new Dataset("ms_single/mdtoncoords.txt"),
       'mdtoff' : new Dataset("ms_single/mdtoffcoords.txt")
    };
-
-   // And some display info
-   window.mouse = [5, 5];
 
    console.log('initialized');
 }
@@ -149,7 +132,7 @@ function locateElement() {
       return;
    }
 
-   console.log('located detector element ' + elementID);
+   /***/ // real code
 }
 
 // Load detector data
@@ -162,80 +145,43 @@ function loadDetectorData(detectorType) {
 
    xhr.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
-
-         // get text contents
-         j = 1000000000000000000;
-
          var coords = this.responseText.split("\n");
 
          coords = coords.filter(Boolean);
 
+         var docfrag = document.createDocumentFragment();
+
          coords.forEach( function(coord) {
-            // dump into data structure
             var coordArray = coord.split(" ").filter(Boolean);
-            set.data.push({
-               id : coordArray[0],
-               x : coordArray[1],
-               y : coordArray[2],
-               width : coordArray[3],
-               height : coordArray[4]
-            });
 
-            // and then the rest
-            var area = document.createElement("area");
-            area.id = detectorType + j.toString();
-            area.shape = "rect";
-            area.href = "#";
+            // create a rectangle for the detector element
+            var rect = document.createElement("div");
+            rect.array = [ // x1, y1, x2, y2
+               parseInt(coordArray[1]),
+               parseInt(coordArray[2]),
+               parseInt(coordArray[3]),
+               parseInt(coordArray[4]),
+            ];
 
-            var att = document.createAttribute("att");
-            att.value = rectangleColor(detectorType, coord);
-            area.setAttributeNode(att);
+            rect.className = "c4-cloak";
+            rect.id = coordArray[0];
+            rect.style.borderColor = rectangleColor(detectorType);
+            rect.style.left = coordArray[1] + "px";
+            var top = parseInt(coordArray[2]) - 100;
+            rect.style.top = top.toString() + "px";
+            var width = parseInt(coordArray[3]) - parseInt(coordArray[1]);
+            rect.style.width = width.toString() + "px";
+            var height = parseInt(coordArray[4]) - parseInt(coordArray[2]);
+            rect.style.height = height.toString() + "px";
 
-            //overlay text is the first term in coords string
-            var div = document.createElement("div");
+            // push rectangle to data structure
+            set.data[coordArray[0]] = rect;
 
-            //increase j
-            j++;
-
-            //append rect and overlay to map
-            document.getElementById("map").appendChild(area);
-
-            if (document.getElementById("map").length > 0) {
-               var offset = area.coords;
-               var coordarray = offset.split(",");
-               var l = coordarray[0];
-               var t = coordarray[1];
-               var r = coordarray[2];
-               var b = coordarray[3];
-               var ident = area.id;
-               var w = r - l;
-               var h = b - t;
-               var bc = att.value;
-
-               //convert area element to a div
-               var elementDiv = document.createElement("div");
-               elementDiv.style.position = 'absolute';
-               elementDiv.style.left = l + 'px';
-               elementDiv.style.top = t + 'px';
-               elementDiv.style.border = 'solid';
-               elementDiv.style.borderColor = bc;
-               elementDiv.style.id = ident;
-               elementDiv.style.display = 'none';
-               elementDiv.style.width = w + 'px';
-               elementDiv.style.height = h + 'px';
-
-               document.body.append(elementDiv);
-
-               if (targetEl == div.innerHTML) {
-                  console.log("match=" + div.innerHTML);
-                  elementDiv.style.display = "block";
-                  console.log(bc);
-               }
-            };
+            docfrag.appendChild(rect);
          });
 
-         console.log(this.responseText);
-
+         //append rect and overlay to map
+         document.getElementById("map").appendChild(docfrag);
       }
    }
 
@@ -245,84 +191,71 @@ function loadDetectorData(detectorType) {
 }
 
 // fix later /***/
-function rectangleColor(i, coord) {
-   var color;
-
-   if (i == 'tgc') {
-      i = 0;
-   } else if (i == 'rpc') {
-      i = 1;
-   } else if (i == 'csc') {
-      i = 2;
-   } else if (i == 'mdton') {
-      i = 3;
-   } else if (i == 'mdtoff') {
-      i = 4;
-   }
-
-   if (i == 0 && coord.substring(4,5) == '1') {
-      color = '#ff9966';
-   }
-
-   if (i == 0 && coord.substring(4,5) == '2') {
-      color = '#ff6600';
-   }
-   if (i == 0 && coord.substring(4,5) == '3') {
-      color = '#ff0000';
-   }
-   if (i == 0 && coord.substring(4,5) == '4') {
-      color = '#800000';
-   }
-
-   if (i == 1) {
-      color = '#ff00ff';
-   }
-
-   if (i == 2) {
-      color = '#cc00cc';
-   }
-
-   if (i == 3) {
-      color = '#660066';
-   }
-
-   if (i == 4 && coord.substring(5,6) == 'S') {
-      color = '#00ff00';
-   }
-   if (i == 4 && coord.substring(5,6) == 'L') {
-      color = '#006600';
-   }
-
-   if (i == 5 && coord.substring(4,5) == 'E') {
-      color = '#00ffff';
-   }
-   if (i == 5 && coord.substring(4,5) == 'I') {
-      color = '#00ccff';
-   }
-   if (i == 5 && coord.substring(4,5) == 'M') {
-      color = '#0066cc';
-   }
-   if (i == 5 && coord.substring(4,5) == 'O') {
-      color = '#003399';
-   }
-
-   if (i == 6 && coord.substring(4,5) == 'E') {
-      color = '#ffff4d';
-   }
-   if (i == 6 && coord.substring(4,5) == 'I') {
-      color = '#ffff00';
-   }
-   if (i == 6 && coord.substring(4,5) == 'M') {
-      color = '#cdcd00';
-   }
-   if (i == 6 && coord.substring(4,5) == 'O') {
-      color = '#8b8b00';
+function rectangleColor(detectorType) {
+   switch (detectorType) {
+      case "tgc":
+         return "#ff9966";
+      case "rpc":
+         return "#cc00cc";
+      case "csc":
+         return "#00ff00";
+      case "mdton":
+         return "#00ccff";
+      case "mdtoff":
+         return "#ffff4d";
+      default:
+         return;
    }
 }
 
 function updateMouse(e) {
-   window.mouseX = e.offsetX;
-   window.mouseY = e.offsetY;
+   var parentRect = document.getElementById("map").getBoundingClientRect();
+   window.mouseX = e.clientX - parentRect.left;
+   window.mouseY = e.clientY - parentRect.top;
+
+   // display relative mouse coords
+   var str = " mouse: " + window.mouseX.toString() + "  " + window.mouseY.toString() + "<br/>";
+   document.getElementById("mousePos").innerHTML = str;
+
+   // iterate through all currently visible rectangles and hide them
+   for (var i = window.visible.length - 1; i >= 0; i--) {
+      window.visible[i].className = "c4-cloak";
+   }
+
+   window.visible = [];
+
+   // update matching detectors (csc)
+   detectorTypes = ["tgc", "rpc", "csc", "mdton", "mdtoff"];
+   hoverDetectors = [];
+
+   for (var j = 0; j < detectorTypes.length; j++) {
+      if (document.getElementById(detectorTypes[j]).selected) {
+         var data = window.detectorData[detectorTypes[j]]['data'];
+         var docfrag = document.createDocumentFragment();
+
+         // iterate through detector elements
+         var detectorElements = Object.keys(data);
+
+         for (var i = 0; i < detectorElements.length; i++) {
+            coordArray = data[detectorElements[i]].array;
+
+            if (window.mouseX > coordArray[0]
+                && window.mouseX < coordArray[2]
+                && window.mouseY + 100 > coordArray[1]
+                && window.mouseY + 100 < coordArray[3]) {
+
+               // add to list to be displayed
+               hoverDetectors.push(detectorElements[i]);
+
+               // show the rectangle
+               window.visible.push(data[detectorElements[i]]);
+               data[detectorElements[i]].className = "c4-uncloak";
+            }
+         }
+      }
+
+      document.getElementById("hoverDetectors").innerHTML = hoverDetectors.toString();
+   }
 }
 
 

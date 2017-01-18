@@ -13,3 +13,11 @@ T 2017-01-17
 
 * Moved all CSS/javascript to separate files, got rid of jquery
 * Need relative pixel translation of eta-phi
+
+TODO
+----
+1. eventually deal with cursor misalignment
+2. clicking on map should also leave a dot/label where the clicked point is
+3. same should happen (as in 2) when a specific eta-phi coordinate is given
+4. make real plots...including vertical/horizontal guide bars
+5. "show all locations of xx detector type"

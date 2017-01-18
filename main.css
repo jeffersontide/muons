@@ -13,7 +13,6 @@ button {
 }
 
 /* Form elements */
-
 form {
    margin: 5px;
 }
@@ -22,8 +21,26 @@ input {
    margin: 5px;
 }
 
+/* Plot elements */
+
+div.c4-cloak {
+   position: absolute;
+   visibility: hidden;
+   border-width: 2px;
+}
+
+div.c4-uncloak {
+   position: absolute;
+   visibility: visible;
+   border-width: 2px;
+}
+
 img {
-   border: 3px solid #ff0000;
+   position: absolute;
+   top: 0px;
+   left: 0px;
+   width: 545px;
+   height: 461px;
 }
 
 /* Layout elements */
@@ -34,18 +51,27 @@ div {
 }
 
 div.c1 {
+   width: auto;
    float: left;
+   display: inline-block;
 }
 
 div.c2 {
-   position: static;
+   float: top;
 }
 
-/* Show/hide classes */
-.uncloak {
-   display: block;
+#map {
+   position: relative;
+   left: 0px;
+   top: 0px;
+   width: 545px;
+   height: 461px;
 }
 
-.cloak {
-   display: none;
+#mousePos {
+   height: 50px;
+}
+
+#hoverDetectorsContainer {
+   height: 300px;
 }
