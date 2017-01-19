@@ -9,13 +9,18 @@
 
    <!-- all Javascript functions -->
    <script type="text/javascript" src="main.js"></script>
+   <script type="text/javascript" src="plot.js"></script>
+   <script type="text/javascript" src="detectors.js"></script>
 </head>
 
 <body onload="init();">
    <!-- map that stores all detector elements -->
    <div class="c1" id="mapContainer">
       <div id="map" class="c2">
-         <img style="background:url()" id="foo" src="ms_single/plotAxes.png" />
+         <!-- src="ms_single/plotAxes.png" -->
+         <img style="background:url()" id="foo" />
+         <canvas id="coordCanvas" height="461" width="545"></canvas>
+         <canvas id="plotCanvas" height="461" width="545"></canvas>
       </div>
    </div>
 
@@ -28,31 +33,57 @@
       </div>
 
       <!-- detector type selection -->
-      <div class="c2" id="detectorSelectionContainer">
-         <table class="detectorContainer">
+      <div class="c2">
+         <table>
             <tr>
-               <td><button id="tgc" class="detectorButton">TGC</button></td>
-               <td><button id="rpc" class="detectorButton">RPC</button></td>
-               <td><button id="csc" class="detectorButton">CSC</button></td>
-               <td><button id="mdton" class="detectorButton">MDT on</button></td>
-               <td><button id="mdtoff" class="detectorButton">MDT off</button></td>
-               <td><button id="clr">Clear</button></td>
+               <td id="detectorButtons">
+                  <!-- buttons added dynamically -->
+               </td>
+               <td>
+                  <button id="clr">Clear</button>
+               </td>
             </tr>
          </table>
       </div>
 
       <!-- find detector element by ID -->
       <div class="c2" id="findElementContainer">
+         &nbsp;Locate element by ID:&nbsp;
          <input id="detectorID" class=""></input>
-         <button id="locate">Locate Element</button>
+         <button id="locate">Locate</button>
       </div>
 
-      <!-- storage for queues, etc. -->
-      <div class="c2" id="infoContainer">
-         <div class="c2" id="mousePos"></div>
-         <div class="c2" id="hoverDetectorsContainer">
-            <textarea id="hoverDetectors"></textarea>
-         </div>
+      <!-- find detector elements by eta-phi coordinate -->
+      <div class="c2" id="findCoordContainer">
+         &nbsp;Locate elements by coordinate:&nbsp;
+         <input id="etaCoord" value="0" style="width:50px;" /> <input id="phiCoord"  style="width:50px;" value="0" />
+         <button id="locateCoord">Locate</button>
+      </div>
+
+      <div class="c2" id="">
+         <button id="clearHold">Clear Holds</button>
+      </div>
+
+      <!-- display mouse coordinates -->
+      <div class="c2" id="mousePos"></div>
+
+      <!-- display selected stations -->
+      <div class="c2">
+         <select size=10 id="hoverStations">
+            <!-- stations will be listed here when hovered over -->
+         </select>
+
+         <!-- contains information for the selected station -->
+         <textarea id="holdStationsDetails"></textarea>
+
+         <br />
+
+         <select size=10 id="holdStations">
+            <!-- stations will be listed here when held -->
+         </select>
+
+         <!-- contains information for the selected station -->
+         <textarea id="holdStationsDetails"></textarea>
       </div>
    </div>
 </body>

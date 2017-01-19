@@ -13,9 +13,9 @@
 
 using namespace std;
 
-void displaycoord() {
+void displaycoord_tgc() {
 
-   TFile *f1 = TFile::Open("offlinemdt.root");
+   TFile *f1 = TFile::Open("tgchist.root");
    TIter next(f1->GetListOfKeys());
    TKey *key;
    std::vector<double> xmin;
@@ -23,6 +23,12 @@ void displaycoord() {
    std::vector<double> xmax;
    std::vector<double> ymax;
    std::vector<string> name;
+
+   double xmin_limit = 0;
+   double xmax_limit = 0;
+   double ymin_limit = 0;
+   double ymax_limit = 0;
+
    while ((key = (TKey*)next())) {
       string hname;
       TClass *cl = gROOT->GetClass(key->GetClassName());
@@ -50,8 +56,8 @@ void displaycoord() {
    }
    int n;
    //hard-coded to fit the ATLAS webdisplay single eta-phi plot.
-   double ipx0 = 74; 
-   double ipy0 = 153; 
+   double ipx0 = 74;
+   double ipy0 = 153;
    double xnpx = 400; //without shifting for origin, number of pixels in the grid in x.
    double xnpy = 336; //npixels in grid in y
 
@@ -60,42 +66,80 @@ void displaycoord() {
    double xpxmax;
    double xpymin;
    double xpymax;
-   int ipxmin;
-   int ipxmax;
-   int ipymin;
-   int ipymax;
+   double ipxmin;
+   double ipxmax;
+   double ipymin;
+   double ipymax;
    double b;
    n = xmin.size();
    b = 3.0;
    FILE *fp;
-   fp = fopen("mdtoffcoords.txt", "w");
+   fp = fopen("tgccoords.txt", "w");
    for (int i = 0; i < n; i++ ) { 
-	sname = name[i];
- 	xpxmin = ipx0 + (xnpx/6.0)*(xmin[i] + b);
- 	xpxmax = ipx0 + (xnpx/6.0)*(xmax[i] + b);
- 	xpymin = ipy0 + (xnpy/6.0)*(-ymin[i] + b);
- 	xpymax = ipy0 + (xnpy/6.0)*(-ymax[i] + b);
- 	ipxmin = floor(xpxmin);
- 	ipxmax = ceil(xpxmax);
- 	ipymin = floor(xpymin);
- 	ipymax = ceil(xpymax);
+      sname = name[i];
+      xpxmin = xmin[i]; // ipx0 + (xnpx/6.0)*(xmin[i] + b);
+      xpxmax = xmax[i]; // ipx0 + (xnpx/6.0)*(xmax[i] + b);
+      xpymin = ymin[i]; // ipy0 + (xnpy/6.0)*(-ymin[i] + b);
+      xpymax = ymax[i]; // ipy0 + (xnpy/6.0)*(-ymax[i] + b);
+      ipxmin = xpxmin; // floor(xpxmin);
+      ipxmax = xpxmax; // ceil(xpxmax);
+      ipymin = xpymin; // floor(xpymin);
+      ipymax = xpymax; // ceil(xpymax);
 
-   /***/
+      /***/
 
-   
+      // keep running track of bounding box
+      if (xmin[i] < xmin_limit) {
+         xmin_limit = xmin[i];
+      }
+
+      if (xmax[i] > xmax_limit) {
+         xmax_limit = xmax[i];
+      }
+
+      if (xmax[i] < xmin_limit) {
+         xmin_limit = xmax[i];
+      }
+
+      if (xmin[i] > xmax_limit) {
+         xmax_limit = xmin[i];
+      }
+
+      if (ymin[i] < ymin_limit) {
+         ymin_limit = ymin[i];
+      }
+
+      if (ymax[i] > ymax_limit) {
+         ymax_limit = ymax[i];
+      }
+
+      if (ymax[i] < ymin_limit) {
+         ymin_limit = ymax[i];
+      }
+
+      if (ymin[i] > ymax_limit) {
+         ymax_limit = ymin[i];
+      }
 
 
+      fprintf(fp, "%s %4f %4f %4f %4f \n", sname.c_str(), ipxmin, ipymax, ipxmax, ipymin);
+   }
 
-	fprintf(fp, "%s %3d %3d %3d %3d \n", sname.c_str(), ipxmin, ipymax, ipxmax, ipymin); 
-   } 
+   // print bounding box
+   cout << "bounding box (x1, y1, x2, y2): "
+            << xmin_limit << ", "
+            << ymin_limit << ", "
+            << xmax_limit << ", "
+            << ymax_limit
+            << endl;
 }
 
 
 int
-displaycoordsingle()
+displaycoordsingle_tgc()
 {
 TApplication *a = new TApplication("a", 0, 0);
-displaycoord();
+displaycoord_tgc();
 return 0;
 }
 

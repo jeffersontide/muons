@@ -21,19 +21,20 @@ input {
    margin: 5px;
 }
 
+textarea {
+   width: 200px;
+   height: 200px;
+   margin: 5px;
+}
+
+select {
+   width: 200px;
+   height: 200px;
+   margin: 5px;
+   onchange: 
+}
+
 /* Plot elements */
-
-div.c4-cloak {
-   position: absolute;
-   visibility: hidden;
-   border-width: 2px;
-}
-
-div.c4-uncloak {
-   position: absolute;
-   visibility: visible;
-   border-width: 2px;
-}
 
 img {
    position: absolute;
@@ -44,6 +45,12 @@ img {
 }
 
 /* Layout elements */
+
+canvas {
+   position: absolute;
+   left: 0px;
+   top: 0px;
+}
 
 div {
    border: 3px solid #5500ff;
@@ -70,8 +77,4 @@ div.c2 {
 
 #mousePos {
    height: 50px;
-}
-
-#hoverDetectorsContainer {
-   height: 300px;
 }

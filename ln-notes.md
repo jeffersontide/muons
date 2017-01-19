@@ -1,3 +1,6 @@
+launch server:
+python3 -m http.server
+
 T 2017-01-17
 ============
 
@@ -14,11 +17,20 @@ T 2017-01-17
 * Moved all CSS/javascript to separate files, got rid of jquery
 * Need relative pixel translation of eta-phi
 
+W 2017-01-2017
+==============
+
 TODO
 ----
 1. eventually deal with cursor misalignment
-2. clicking on map should also leave a dot/label where the clicked point is
+2. clicking on map should also leave a dot/label where the clicked point is?
 3. same should happen (as in 2) when a specific eta-phi coordinate is given
-4. make real plots...including vertical/horizontal guide bars
-5. "show all locations of xx detector type"
-6. ??? how to superimpose plot images, e.g. select matching corners
+4. re-implement color scheme
+5. display info for selected (held) stations, or hovered-over in hold list (http://stackoverflow.com/questions/13262653/hovering-over-an-option-in-a-select-list)
+6. plot margins etc.
+7. use less dumb naming
+
+check
+-----
+1. may need to flip y axis during coordinate-pixel transformation
+2. how to align background images
