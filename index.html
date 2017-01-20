@@ -29,7 +29,8 @@
       <!-- upload plot image -->
       <div class="c2">
          <input type="file" id="imgInput" accept="image/*" data-type="image" />
-         <button id="clearPlotImage">Clear Plot Image</button>
+         <button id="clearPlotImage">Clear Image</button>
+         <button id="editImage">Edit Image</button>
       </div>
 
       <!-- detector type selection -->
@@ -69,21 +70,19 @@
 
       <!-- display selected stations -->
       <div class="c2">
-         <select size=10 id="hoverStations">
+         <select size=10 multiple='true' id="hoverStations">
             <!-- stations will be listed here when hovered over -->
          </select>
 
-         <!-- contains information for the selected station -->
-         <textarea id="holdStationsDetails"></textarea>
-
-         <br />
-
-         <select size=10 id="holdStations">
+         <select size=10 multiple='true' id="holdStations">
             <!-- stations will be listed here when held -->
          </select>
 
-         <!-- contains information for the selected station -->
-         <textarea id="holdStationsDetails"></textarea>
+         <br />
+
+         <button id="selectAll">Select All</button>
+         <button id="selectNone">Select None</button>
+         <button id="selectRemove">Remove</button>
       </div>
    </div>
 </body>

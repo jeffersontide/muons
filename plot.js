@@ -42,8 +42,6 @@ function Plot(canvasID, coordCanvas, axes, image, title, grid) {
    if (this.grid) {
       this.drawGrid();
    }
-
-   console.log('initialized plot.')
 }
 
 Plot.prototype.drawAxes = function() {
@@ -118,7 +116,7 @@ Plot.prototype.drawAxes = function() {
 }
 
 Plot.prototype.drawGrid = function() {
-   //
+   // ...
 }
 
 Plot.prototype.drawRect = function(coordArray, color, thickness) {
@@ -138,7 +136,26 @@ Plot.prototype.drawRect = function(coordArray, color, thickness) {
    context.stroke();
 }
 
+Plot.prototype.identifyRect = function(coordArray, color, thickness) {
+   // ...
 
+   /*
+   // coordArray = [x1, y1, x2, y2]
+   var context = this.context;
+
+   context.beginPath();
+   context.lineWidth = thickness;
+   context.strokeStyle = color;
+
+   var x1 = this.centerPixel[0] + (coordArray[0] * this.pixelsPerUnit[0]) - 2;
+   var y1 = this.centerPixel[1] + (coordArray[1] * this.pixelsPerUnit[1]) - 2;
+   var x2 = this.centerPixel[0] + (coordArray[2] * this.pixelsPerUnit[0]) + 2;
+   var y2 = this.centerPixel[1] + (coordArray[3] * this.pixelsPerUnit[1]) + 2;
+
+   context.rect(x1, y1, x2 - x1, y2 - y1);
+   context.stroke();
+    */
+}
 
 
 

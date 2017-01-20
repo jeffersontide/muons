@@ -45,6 +45,10 @@ Detectors.prototype.addDetector = function(id, name, color, path) {
             'draw' : function(plot) {
                plot.drawRect(coords, color, 2);
             },
+            'identify' : function(plot) {
+               // Push out the coordinates
+               plot.identifyRect(coords, "#000000", 2);
+            },
             'hold' : false    // true: "hold" the station on the plot
          };
       }

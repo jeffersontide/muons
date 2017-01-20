@@ -10,6 +10,11 @@ function init() {
    document.getElementById("clearHold").onclick = unholdStations;
    document.getElementById("locateCoord").onclick = locateElementsByCoord;
 
+   document.getElementById("holdStations").onkeydown = copyWatch;
+   document.getElementById("selectAll").onclick = selectAll;
+   document.getElementById("selectNone").onclick = selectNone;
+   document.getElementById("selectRemove").onclick = selectRemove;
+
    // Detector structure, adds detector buttons by default
    window.detectors = new Detectors();
 
@@ -80,7 +85,8 @@ function toggleDetector() {
       loadDetectorData(this.id);
    }
 
-   // Clear all holds /***/
+   // Disable holds on hold list
+   // ...
 
    updateDetectors();
 }
@@ -99,7 +105,7 @@ function clearDetectors() {
    }
 }
 
-// Locate station position by ID
+// Locate stations
 function locateElement() {
    var elementID = document.getElementById("detectorID").value;
 
@@ -122,10 +128,12 @@ function locateElement() {
       }
    }
 
+   // Print an error message if none found
+   // ...
+
    updateDetectors();
 }
 
-// Locate elements by coords
 function locateElementsByCoord() {
    x = parseFloat(document.getElementById("etaCoord").value);
    y = parseFloat(document.getElementById("phiCoord").value);
@@ -135,7 +143,7 @@ function locateElementsByCoord() {
    updateDetectors();
 }
 
-// Load detector data
+// Some of these shouldn't be global
 function loadDetectorData(detectorID) {
    var xhr = new XMLHttpRequest();
 
@@ -172,8 +180,6 @@ function loadDetectorData(detectorID) {
    xhr.send();
 
    detector.loaded = true;
-
-   console.log("loaded detector " + detectorID);
 }
 
 function updateDetectors() {
@@ -183,7 +189,7 @@ function updateDetectors() {
    plotContext.clearRect(0, 0, plotCanvas.width, plotCanvas.height);
 
    // Deal with hover stations
-   var hoverStations = [];
+   var hoverStationList = [];
    var hoverElement = document.getElementById("hoverStations");
 
    // Clear list
@@ -193,16 +199,16 @@ function updateDetectors() {
 
    // Get stations from current mouse position
    if (window.mouse.track) {
-      hoverStations = findStations(window.mouse.x, window.mouse.y, 'hover');
+      hoverStationList = findStations(window.mouse.x, window.mouse.y, 'hover');
    }
 
-   for (var i = 0; i < hoverStations.length; i++) {
+   for (var i = 0; i < hoverStationList.length; i++) {
       // Plot hover stations
-      hoverStations[i].draw(window.plot);
+      hoverStationList[i].draw(window.plot);
 
       // Display hover stations in list
       var element = document.createElement('option');
-      element.text = hoverStations[i].id;
+      element.text = hoverStationList[i].id;
       hoverElement.appendChild(element);
    }
 
@@ -222,6 +228,7 @@ function updateDetectors() {
       // Display hold stations
       var element = document.createElement('option');
       element.text = holdStationList[i].id;
+      element.onmouseover = identifyStation;
       holdElement.appendChild(element);
    }
 }
@@ -270,6 +277,23 @@ function findStations(x, y, options) {
    return stationList;
 }
 
+// Put a big box around the station if hovered over in the hold list
+function identifyStation() {
+   // Find the id in window.holdList; the corresponding object should represent
+   // the whole station
+
+   for (var i = 0; i < window.holdList.length; i++) {
+      if (window.holdList[i].id == this.text) {
+         var station = window.holdList[i];
+         station.identify(window.plot);
+         return;
+      }
+   }
+
+   // If you're still here then crap
+   console.log('well crap')
+}
+
 function holdStations(x, y) {
    var stations = findStations(x, y, 'hover');
 
@@ -289,6 +313,101 @@ function unholdStations() {
    updateDetectors();
 }
 
+// ==============
+// Select stations
+// ==============
+
+function selectAll() {
+   var elem = document.getElementById("holdStations");
+
+   // Iterate through all the options, selecting them
+   for (var i = 0; i < elem.children.length; i++) {
+      elem.children[i].selected = true;
+   }
+
+   elem.focus();
+}
+
+function selectNone() {
+   var elem = document.getElementById("holdStations");
+
+   // Iterate through all the options, selecting them
+   for (var i = 0; i < elem.children.length; i++) {
+      elem.children[i].selected = false;
+   }
+}
+
+function selectRemove() {
+   // Get the station ID's selected
+   // ...
+
+   // Find each station object
+   // ...
+
+   // set station.hold = false
+   // ...
+
+   // Remove station from window.holdList
+   // ...
+
+   updateDetectors();
+}
+
+// stolen from http://stackoverflow.com/questions/17394908/copy-selected-items-text-from-select-control-html
+//to be run on keydown, which occurs before clipboard copy
+function copyWatch(e) {
+   e = e || event; // internet explorer
+
+   // For anything to happen, ctrl-c must be sent and something must be
+   // selected from the list. Otherwise, return.
+   // if ((!(e.ctrlKey && e.keyCode == '67')) || (this.selectedIndex < 0)) {
+   // if (!(e.ctrlKey) || this.selectedIndex < 0) {
+   //    console.log('goodbye');
+   //    return;
+   // }
+
+   // Create selectable text
+   var copyEl = document.createElement('textarea');
+
+   var selected = [];
+   var selectedText = '';
+
+   for (var i = 0; i < this.options.length; i++) {
+      if (this.options[i].selected) {
+         selected.push(i);
+         selectedText += this.options[i].text + " ";
+      }
+   }
+
+   // No items are selected
+   if (selected.length == 0) {
+      return;
+   }
+
+   copyEl.innerHTML = selectedText;
+
+   //hide it, but in a way the browser thinks is clickable
+   //(no visibility:hidden, display:none)
+   copyEl.style.position = 'absolute';
+   copyEl.style.left = '-9999px';
+
+   var that = this;
+
+   //add a call back for after the ctrl+c is completed
+   copyEl.onkeyup = function() {
+      //remove the extraneous element
+      copyEl.parentNode.removeChild(copyEl);
+
+      //return focus to the select
+      that.focus();
+   };
+
+   //add the textbox to the document, and highlight all the text in the
+   // textarea, ready for the ctrl+c copy event to fire
+   document.body.appendChild(copyEl).select();
+
+//    this.onkeydown = copyWatch;
+}
 
 // ========================================================================== //
 //    Mouse callbacks

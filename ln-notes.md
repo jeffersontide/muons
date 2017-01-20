@@ -22,13 +22,12 @@ W 2017-01-2017
 
 TODO
 ----
-1. eventually deal with cursor misalignment
-2. clicking on map should also leave a dot/label where the clicked point is?
-3. same should happen (as in 2) when a specific eta-phi coordinate is given
 4. re-implement color scheme
 5. display info for selected (held) stations, or hovered-over in hold list (http://stackoverflow.com/questions/13262653/hovering-over-an-option-in-a-select-list)
 6. plot margins etc.
 7. use less dumb naming
+8. image click-drag / rescale
+9. pdf reader
 
 check
 -----
