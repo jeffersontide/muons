@@ -66,6 +66,8 @@ function setOriginCallback() {
    // Catch the next click and prevent it from registering (this will be reset
    // immediately after the click)
    window.addEventListener('click', stopClickEvent, true);
+
+   document.getElementById("map").style.cursor = 'crosshair';
 }
 
 function setOrigin_mousedown(e) {
@@ -78,10 +80,7 @@ function setOrigin_mousedown(e) {
                    e.clientY < mapRect.bottom;
 
    if (insideMap) {
-      // get the pixel coordinates of the click (relative to the NW corner of
-      // the canvas) and report this to window.plot
-      console.log('hit');
-
+      // Fire off the first movement
       var x = e.clientX - mapRect.left;
       var y = e.clientY - mapRect.top;
 
@@ -91,18 +90,49 @@ function setOrigin_mousedown(e) {
       var y_coord = parseFloat(document.getElementById("originY").value);
 
       window.plot.setOrigin(x_coord, y_coord, x, y);
-
+      
       updateDetectors();
-   } else {
-      console.log('miss');
-   }
 
-   window.removeEventListener('mousedown', setOrigin_mousedown, true);
+      // Set up event listeners for mousemove & mouseup, which will clean up
+      // after themselves.
+      window.addEventListener('mousemove', setOrigin_mousemove, true);
+      window.addEventListener('mouseup', setOrigin_mouseup, true);
+   } else {
+      window.removeEventListener('mousedown', setOrigin_mousedown, true);
+      map.style.cursor = 'auto';
+      console.log("done setting origin.");
+   }
 
    // Prevent the mousedown event from propagating forward
    e.stopPropagation();
+}
 
-   console.log("done setting origin.");
+function setOrigin_mousemove(e) {
+   var map = document.getElementById("map");
+   var mapRect = map.getBoundingClientRect();
+
+   var x = e.clientX - mapRect.left;
+   var y = e.clientY - mapRect.top;
+
+   // x_coord, y_coord coordinate desired
+   // x, y respective pixel position of the coordinate
+   var x_coord = parseFloat(document.getElementById("originX").value);
+   var y_coord = parseFloat(document.getElementById("originY").value);
+
+   window.plot.setOrigin(x_coord, y_coord, x, y);
+
+   updateDetectors();
+
+   e.stopPropagation();
+}
+
+function setOrigin_mouseup(e) {
+   // Clean up
+   // window.removeEventListener('mousedown', setOrigin_mousedown, true);
+   window.removeEventListener('mousemove', setOrigin_mousemove, true);
+   window.removeEventListener('mouseup', setOrigin_mouseup, true);
+
+   e.stopPropagation();
 }
 
 // Start scaleX process
@@ -116,11 +146,14 @@ function scaleXCallback() {
    // Catch the next click and prevent it from registering (this will be reset
    // immediately after the click)
    window.addEventListener('click', stopClickEvent, true);
+
+   document.getElementById("map").style.cursor = 'col-resize';
 }
 
 function scaleX_mousedown(e) {
    // Make sure the click lands inside the map
    var map = document.getElementById("map");
+
    var mapRect = map.getBoundingClientRect();
    var insideMap = mapRect.left < e.clientX &&
    e.clientX < mapRect.right &&
@@ -130,7 +163,6 @@ function scaleX_mousedown(e) {
    if (insideMap) {
       // get the pixel coordinates of the click (relative to the NW corner of
       // the canvas) and report this to window.plot
-      console.log('hit');
       var x0 = e.clientX - mapRect.left;
       window.plot.setScaleX(x0);
 
@@ -139,10 +171,10 @@ function scaleX_mousedown(e) {
       window.addEventListener('mousemove', scaleX_mousemove, true);
       window.addEventListener('mouseup', scaleX_mouseup, true);
    } else {
-      console.log('miss');
+      window.removeEventListener('mousedown', scaleX_mousedown, true);
+      map.style.cursor = 'auto';
+      console.log("done scaling x.");
    }
-
-   window.removeEventListener('mousedown', scaleX_mousedown, true);
 
    // Prevent the mousedown event from propagating forward
    e.stopPropagation();
@@ -166,14 +198,12 @@ function scaleX_mousemove(e) {
 
 function scaleX_mouseup(e) {
    // Clean up
-   window.removeEventListener('mousedown', scaleX_mousedown, true);
+   // window.removeEventListener('mousedown', scaleX_mousedown, true);
    window.removeEventListener('mousemove', scaleX_mousemove, true);
    window.removeEventListener('mouseup', scaleX_mouseup, true);
 
    // Prevent forward propagation
    e.stopPropagation();
-
-   console.log("done scaling x.");
 }
 
 // Start scaleY process
@@ -187,6 +217,8 @@ function scaleYCallback() {
    // Catch the next click and prevent it from registering (this will be reset
    // immediately after the click)
    window.addEventListener('click', stopClickEvent, true);
+
+   document.getElementById("map").style.cursor = 'row-resize';
 }
 
 function scaleY_mousedown(e) {
@@ -201,7 +233,6 @@ function scaleY_mousedown(e) {
    if (insideMap) {
       // get the pixel coordinates of the click (relative to the NW corner of
       // the canvas) and report this to window.plot
-      console.log('hit');
       var y0 = e.clientY - mapRect.top;
       window.plot.setScaleY(y0);
 
@@ -210,10 +241,10 @@ function scaleY_mousedown(e) {
       window.addEventListener('mousemove', scaleY_mousemove, true);
       window.addEventListener('mouseup', scaleY_mouseup, true);
    } else {
-      console.log('miss');
+      window.removeEventListener('mousedown', scaleY_mousedown, true);
+      map.style.cursor = 'auto';
+      console.log("done scaling y.");
    }
-
-   window.removeEventListener('mousedown', scaleY_mousedown, true);
 
    // Prevent the mousedown event from propagating forward
    e.stopPropagation();
@@ -237,14 +268,12 @@ function scaleY_mousemove(e) {
 
 function scaleY_mouseup(e) {
    // Clean up
-   window.removeEventListener('mousedown', scaleY_mousedown, true);
+   // window.removeEventListener('mousedown', scaleY_mousedown, true);
    window.removeEventListener('mousemove', scaleY_mousemove, true);
    window.removeEventListener('mouseup', scaleY_mouseup, true);
 
    // Prevent forward propagation
    e.stopPropagation();
-
-   console.log("done scaling y.");
 }
 
 

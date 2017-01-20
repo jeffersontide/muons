@@ -41,4 +41,4 @@ Added:
 
 Todo:
 - crappy deselect thing in the hold text list
-
+- enable the plot manipulation to stay on until clicking outside the map

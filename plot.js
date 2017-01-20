@@ -207,8 +207,6 @@ Plot.prototype.setOrigin = function(x_coord, y_coord, x, y) {
    var x0 = -(this.axes[0].min - x_coord) * this.pixelsPerUnit[0];
    var y0 = -(this.axes[1].min - y_coord) * this.pixelsPerUnit[1];
 
-   console.log(x_coord, y_coord);
-
    // Need to shift the graph by ___ in coordinate units
    var x_shift = (x - x0) / this.pixelsPerUnit[0];
    var y_shift = (y - y0) / this.pixelsPerUnit[1];
