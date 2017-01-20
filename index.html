@@ -19,6 +19,7 @@
       <div id="map" class="c2">
          <!-- src="ms_single/plotAxes.png" -->
          <img style="background:url()" id="foo" />
+         <canvas id="imageCanvas" height="461" width="545"></canvas>
          <canvas id="coordCanvas" height="461" width="545"></canvas>
          <canvas id="plotCanvas" height="461" width="545"></canvas>
       </div>
@@ -30,7 +31,16 @@
       <div class="c2">
          <input type="file" id="imgInput" accept="image/*" data-type="image" />
          <button id="clearPlotImage">Clear Image</button>
-         <button id="editImage">Edit Image</button>
+      </div>
+
+      <!-- manipulate plot axes -->
+      <div class="c2">
+         <input id="originX" style="width:50px" value="0"></input>
+         <input id="originY" style="width:50px" value="0"></input>
+
+         <button id="setOrigin">Set Origin</button>
+         <button id="scaleX">Scale X-Axis</button>
+         <button id="scaleY">Scale Y-Axis</button>
       </div>
 
       <!-- detector type selection -->
@@ -61,30 +71,45 @@
          <button id="locateCoord">Locate</button>
       </div>
 
-      <div class="c2" id="">
-         <button id="clearHold">Clear Holds</button>
-      </div>
-
       <!-- display mouse coordinates -->
       <div class="c2" id="mousePos"></div>
 
       <!-- display selected stations -->
-      <div class="c2">
-         <select size=10 multiple='true' id="hoverStations">
+      <div class="c2" style="display:inline-block;">
+         <div style="width:200px; height:200px; float:left; overflow:auto;" id="hoverStations">
             <!-- stations will be listed here when hovered over -->
-         </select>
+         </div>
 
-         <select size=10 multiple='true' id="holdStations">
+         <div style="width:200px; height:200px; float:left; overflow:auto;" id="holdStations">
             <!-- stations will be listed here when held -->
-         </select>
+         </div>
 
          <br />
-
-         <button id="selectAll">Select All</button>
-         <button id="selectNone">Select None</button>
-         <button id="selectRemove">Remove</button>
+         <button id="clearHold">Clear Holds</button>
       </div>
    </div>
 </body>
 
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

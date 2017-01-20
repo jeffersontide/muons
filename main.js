@@ -1,6 +1,8 @@
 // main.js
 
-// Any functions to run right after the page loads
+// ===== //
+// Setup //
+// ===== //
 function init() {
    // Set form callbacks
    document.getElementById("clr").onclick = clearDetectors;
@@ -10,16 +12,20 @@ function init() {
    document.getElementById("clearHold").onclick = unholdStations;
    document.getElementById("locateCoord").onclick = locateElementsByCoord;
 
-   document.getElementById("holdStations").onkeydown = copyWatch;
-   document.getElementById("selectAll").onclick = selectAll;
-   document.getElementById("selectNone").onclick = selectNone;
-   document.getElementById("selectRemove").onclick = selectRemove;
+   // Set up canvas plot
+   window.etaAxis = new Axis('eta', -2.6, 2.6, 0.5, 'abs', '#000000', 'linear');
+   window.phiAxis = new Axis('phi', -3.2, 3.2, 0.5, 'abs', '#000000', 'linear');
+   window.plot = new Plot("plotCanvas", "coordCanvas",
+                          [window.etaAxis, window.phiAxis], "", true);
 
-   // Detector structure, adds detector buttons by default
-   window.detectors = new Detectors();
+   // Set up plot manipulation
+   document.getElementById("setOrigin").onclick = setOriginCallback;
+   document.getElementById("scaleX").onclick = scaleXCallback;
+   document.getElementById("scaleY").onclick = scaleYCallback;
 
    // Mouse tracking in the plot window
    window.mouse = {
+      'mode' : '', // 'none', 'origin', 'x', 'y'
       'track' : false,
       'pixelx' : 0,
       'pixely' : 0,
@@ -32,15 +38,219 @@ function init() {
    window.mouse.parent.onclick = clickCallback;
    window.mouse.parent.onmouseout = mouseoutCallback;
 
-   // Set up canvas plot
-   window.etaAxis = new Axis('eta', -2.6, 2.6, 0.5, 'abs', '#000000', 'linear');
-   window.phiAxis = new Axis('phi', -3.2, 3.2, 0.5, 'abs', '#000000', 'linear');
-   window.plot = new Plot("plotCanvas", "coordCanvas",
-                          [window.etaAxis, window.phiAxis], "", true);
+   // Detector structure to hold data, adds detector buttons by default
+   window.detectors = new Detectors();
 
    // Held stations, terrible
    window.holdList = [];
 }
+
+
+// ================= //
+// Plot manipulation //
+// ================= //
+
+function stopClickEvent(e) {
+   e.stopPropagation();
+   window.removeEventListener('click', stopClickEvent, true);
+}
+
+// Start setOrigin process
+function setOriginCallback() {
+   // Make some warning text
+   console.log("setting origin...");
+
+   // Set a listener for the next mousedown within the window
+   window.addEventListener('mousedown', setOrigin_mousedown, true);
+
+   // Catch the next click and prevent it from registering (this will be reset
+   // immediately after the click)
+   window.addEventListener('click', stopClickEvent, true);
+}
+
+function setOrigin_mousedown(e) {
+   // Make sure that the click lands inside the map
+   var map = document.getElementById("map");
+   var mapRect = map.getBoundingClientRect();
+   var insideMap = mapRect.left < e.clientX &&
+                   e.clientX < mapRect.right &&
+                   mapRect.top < e.clientY &&
+                   e.clientY < mapRect.bottom;
+
+   if (insideMap) {
+      // get the pixel coordinates of the click (relative to the NW corner of
+      // the canvas) and report this to window.plot
+      console.log('hit');
+
+      var x = e.clientX - mapRect.left;
+      var y = e.clientY - mapRect.top;
+
+      // x_coord, y_coord coordinate desired
+      // x, y respective pixel position of the coordinate
+      var x_coord = parseFloat(document.getElementById("originX").value);
+      var y_coord = parseFloat(document.getElementById("originY").value);
+
+      window.plot.setOrigin(x_coord, y_coord, x, y);
+
+      updateDetectors();
+   } else {
+      console.log('miss');
+   }
+
+   window.removeEventListener('mousedown', setOrigin_mousedown, true);
+
+   // Prevent the mousedown event from propagating forward
+   e.stopPropagation();
+
+   console.log("done setting origin.");
+}
+
+// Start scaleX process
+function scaleXCallback() {
+   // Make some warning text
+   console.log("scaling x...");
+
+   // Set a listener for the next mousedown within the window
+   window.addEventListener('mousedown', scaleX_mousedown, true);
+
+   // Catch the next click and prevent it from registering (this will be reset
+   // immediately after the click)
+   window.addEventListener('click', stopClickEvent, true);
+}
+
+function scaleX_mousedown(e) {
+   // Make sure the click lands inside the map
+   var map = document.getElementById("map");
+   var mapRect = map.getBoundingClientRect();
+   var insideMap = mapRect.left < e.clientX &&
+   e.clientX < mapRect.right &&
+   mapRect.top < e.clientY &&
+   e.clientY < mapRect.bottom;
+
+   if (insideMap) {
+      // get the pixel coordinates of the click (relative to the NW corner of
+      // the canvas) and report this to window.plot
+      console.log('hit');
+      var x0 = e.clientX - mapRect.left;
+      window.plot.setScaleX(x0);
+
+      // Now set up event listeners for mousemove & mouseup (on the window).
+      // They will clean up after themselves.
+      window.addEventListener('mousemove', scaleX_mousemove, true);
+      window.addEventListener('mouseup', scaleX_mouseup, true);
+   } else {
+      console.log('miss');
+   }
+
+   window.removeEventListener('mousedown', scaleX_mousedown, true);
+
+   // Prevent the mousedown event from propagating forward
+   e.stopPropagation();
+}
+
+function scaleX_mousemove(e) {
+   // Find the x coordinate of the mouse wrt. the NW corner of the canvas
+   var map = document.getElementById("map");
+   var mapRect = map.getBoundingClientRect();
+   var x = e.clientX - mapRect.left;
+
+   // Send this to the plot
+   window.plot.scaleX(x);
+
+   // Update all the boxes
+   updateDetectors();
+
+   // Prevent event propagation
+   e.stopPropagation();
+}
+
+function scaleX_mouseup(e) {
+   // Clean up
+   window.removeEventListener('mousedown', scaleX_mousedown, true);
+   window.removeEventListener('mousemove', scaleX_mousemove, true);
+   window.removeEventListener('mouseup', scaleX_mouseup, true);
+
+   // Prevent forward propagation
+   e.stopPropagation();
+
+   console.log("done scaling x.");
+}
+
+// Start scaleY process
+function scaleYCallback() {
+   // Make some warning text
+   console.log("scaling y...");
+
+   // Set a listener for the next mousedown within the window
+   window.addEventListener('mousedown', scaleY_mousedown, true);
+
+   // Catch the next click and prevent it from registering (this will be reset
+   // immediately after the click)
+   window.addEventListener('click', stopClickEvent, true);
+}
+
+function scaleY_mousedown(e) {
+   // Make sure the click lands inside the map
+   var map = document.getElementById("map");
+   var mapRect = map.getBoundingClientRect();
+   var insideMap = mapRect.left < e.clientX &&
+   e.clientX < mapRect.right &&
+   mapRect.top < e.clientY &&
+   e.clientY < mapRect.bottom;
+
+   if (insideMap) {
+      // get the pixel coordinates of the click (relative to the NW corner of
+      // the canvas) and report this to window.plot
+      console.log('hit');
+      var y0 = e.clientY - mapRect.top;
+      window.plot.setScaleY(y0);
+
+      // Now set up event listeners for mousemove & mouseup (on the window).
+      // They will clean up after themselves.
+      window.addEventListener('mousemove', scaleY_mousemove, true);
+      window.addEventListener('mouseup', scaleY_mouseup, true);
+   } else {
+      console.log('miss');
+   }
+
+   window.removeEventListener('mousedown', scaleY_mousedown, true);
+
+   // Prevent the mousedown event from propagating forward
+   e.stopPropagation();
+}
+
+function scaleY_mousemove(e) {
+   // Find the x coordinate of the mouse wrt. the NW corner of the canvas
+   var map = document.getElementById("map");
+   var mapRect = map.getBoundingClientRect();
+   var y = e.clientY - mapRect.left;
+
+   // Send this to the plot
+   window.plot.scaleY(y);
+
+   // Update all the boxes
+   updateDetectors();
+
+   // Prevent event propagation
+   e.stopPropagation();
+}
+
+function scaleY_mouseup(e) {
+   // Clean up
+   window.removeEventListener('mousedown', scaleY_mousedown, true);
+   window.removeEventListener('mousemove', scaleY_mousemove, true);
+   window.removeEventListener('mouseup', scaleY_mouseup, true);
+
+   // Prevent forward propagation
+   e.stopPropagation();
+
+   console.log("done scaling y.");
+}
+
+
+// ================ //
+// Background image //
+// ================ //
 
 // Set a background image for the plot
 function loadPlotImage() {
@@ -53,8 +263,10 @@ function loadPlotImage() {
    // Set the filereader to update the background image in the plot (image)
    // element as a dataURL
    reader.onload = function(e) {
-      document.getElementById("foo").style.background = "url("
-         + e.target.result + ")";
+
+      document.getElementById("foo").src = e.target.result;
+      //document.getElementById("foo").style.background = "url("
+        // + e.target.result + ")";
    }
 
    reader.readAsDataURL(this.files[0]);
@@ -67,6 +279,11 @@ function clearPlotImage() {
    // Reset file prompt dialog
    document.getElementById("imgInput").value = "";
 }
+
+
+// =================== //
+// Selecting detectors //
+// =================== //
 
 // Toggle a detector button
 function toggleDetector() {
@@ -86,7 +303,12 @@ function toggleDetector() {
    }
 
    // Disable holds on hold list
-   // ...
+   for (var i = window.holdList.length - 1; i >= 0; i--) {
+      if (window.holdList[i].detectorType.id == this.id && window.holdList[i].hold) {
+         window.holdList[i].hold = false;
+         window.holdList.splice(i, 1);
+      }
+   }
 
    updateDetectors();
 }
@@ -104,6 +326,11 @@ function clearDetectors() {
       }
    }
 }
+
+
+// ================= //
+// Locating stations //
+// ================= //
 
 // Locate stations
 function locateElement() {
@@ -182,6 +409,11 @@ function loadDetectorData(detectorID) {
    detector.loaded = true;
 }
 
+
+// ================== //
+// Selecting stations //
+// ================== //
+
 function updateDetectors() {
    // Clear plot
    var plotCanvas = document.getElementById("plotCanvas");
@@ -207,8 +439,9 @@ function updateDetectors() {
       hoverStationList[i].draw(window.plot);
 
       // Display hover stations in list
-      var element = document.createElement('option');
-      element.text = hoverStationList[i].id;
+      var element = document.createElement('span');
+      element.style.borderColor = hoverStationList[i].detectorType.color;
+      element.innerHTML = hoverStationList[i].id;
       hoverElement.appendChild(element);
    }
 
@@ -226,9 +459,13 @@ function updateDetectors() {
       holdStationList[i].draw(window.plot);
 
       // Display hold stations
-      var element = document.createElement('option');
-      element.text = holdStationList[i].id;
+      var element = document.createElement('span');
+      element.style.borderColor = holdStationList[i].detectorType.color;
+      element.id = holdStationList[i].id;
+      element.innerHTML = element.id;
       element.onmouseover = identifyStation;
+      element.onmouseout = updateDetectors;
+      element.ondblclick = unholdStation;
       holdElement.appendChild(element);
    }
 }
@@ -279,11 +516,12 @@ function findStations(x, y, options) {
 
 // Put a big box around the station if hovered over in the hold list
 function identifyStation() {
+   this.parentElement.focus();
+
    // Find the id in window.holdList; the corresponding object should represent
    // the whole station
-
    for (var i = 0; i < window.holdList.length; i++) {
-      if (window.holdList[i].id == this.text) {
+      if (window.holdList[i].id == this.id) {
          var station = window.holdList[i];
          station.identify(window.plot);
          return;
@@ -313,105 +551,30 @@ function unholdStations() {
    updateDetectors();
 }
 
-// ==============
-// Select stations
-// ==============
+function unholdStation() {
+   // 'this' refers to the text element in the list
+   var stationID = this.id;
 
-function selectAll() {
-   var elem = document.getElementById("holdStations");
-
-   // Iterate through all the options, selecting them
-   for (var i = 0; i < elem.children.length; i++) {
-      elem.children[i].selected = true;
+   // Find the station in the hold list, then remove it
+   for (var i = 0; i < window.holdList.length; i++) {
+      if (window.holdList[i].id == stationID) {
+         // Unhold the station and remove it from the global list
+         window.holdList[i].hold = false;
+         window.holdList.splice(i, 1);
+         break;
+      }
    }
 
-   elem.focus();
-}
-
-function selectNone() {
-   var elem = document.getElementById("holdStations");
-
-   // Iterate through all the options, selecting them
-   for (var i = 0; i < elem.children.length; i++) {
-      elem.children[i].selected = false;
-   }
-}
-
-function selectRemove() {
-   // Get the station ID's selected
-   // ...
-
-   // Find each station object
-   // ...
-
-   // set station.hold = false
-   // ...
-
-   // Remove station from window.holdList
-   // ...
+   // Delete the text element from the list
+   this.remove();
 
    updateDetectors();
 }
 
-// stolen from http://stackoverflow.com/questions/17394908/copy-selected-items-text-from-select-control-html
-//to be run on keydown, which occurs before clipboard copy
-function copyWatch(e) {
-   e = e || event; // internet explorer
 
-   // For anything to happen, ctrl-c must be sent and something must be
-   // selected from the list. Otherwise, return.
-   // if ((!(e.ctrlKey && e.keyCode == '67')) || (this.selectedIndex < 0)) {
-   // if (!(e.ctrlKey) || this.selectedIndex < 0) {
-   //    console.log('goodbye');
-   //    return;
-   // }
-
-   // Create selectable text
-   var copyEl = document.createElement('textarea');
-
-   var selected = [];
-   var selectedText = '';
-
-   for (var i = 0; i < this.options.length; i++) {
-      if (this.options[i].selected) {
-         selected.push(i);
-         selectedText += this.options[i].text + " ";
-      }
-   }
-
-   // No items are selected
-   if (selected.length == 0) {
-      return;
-   }
-
-   copyEl.innerHTML = selectedText;
-
-   //hide it, but in a way the browser thinks is clickable
-   //(no visibility:hidden, display:none)
-   copyEl.style.position = 'absolute';
-   copyEl.style.left = '-9999px';
-
-   var that = this;
-
-   //add a call back for after the ctrl+c is completed
-   copyEl.onkeyup = function() {
-      //remove the extraneous element
-      copyEl.parentNode.removeChild(copyEl);
-
-      //return focus to the select
-      that.focus();
-   };
-
-   //add the textbox to the document, and highlight all the text in the
-   // textarea, ready for the ctrl+c copy event to fire
-   document.body.appendChild(copyEl).select();
-
-//    this.onkeydown = copyWatch;
-}
-
-// ========================================================================== //
-//    Mouse callbacks
-// ========================================================================== //
+// =============== //
+// Mouse callbacks //
+// =============== //
 
 function mousemoveCallback(e) {
    window.mouse.track = true;

@@ -23,6 +23,10 @@ function Plot(canvasID, coordCanvas, axes, image, title, grid) {
    this.grid = grid;       // Boolean
    this.tickSize = 10;
 
+   this.init();
+}
+
+Plot.prototype.init = function() {
    // Axis range in coordinate units
    this.range = [this.axes[0].max - this.axes[0].min,
                  this.axes[1].max - this.axes[1].min];
@@ -32,8 +36,10 @@ function Plot(canvasID, coordCanvas, axes, image, title, grid) {
                          this.canvas.height / this.range[1]];
 
    // Central pixel location
-   this.centerPixel = [Math.round(Math.abs(this.axes[0].min / this.range[0]) * this.canvas.width),
-                       Math.round(Math.abs(this.axes[1].min / this.range[1]) * this.canvas.height)];
+   this.centerPixel = [Math.round(Math.abs(this.axes[0].min / this.range[0])
+                                  * this.canvas.width),
+                       Math.round(Math.abs(this.axes[1].min / this.range[1])
+                                  * this.canvas.height)];
 
    // Draw axes
    this.drawAxes();
@@ -42,6 +48,11 @@ function Plot(canvasID, coordCanvas, axes, image, title, grid) {
    if (this.grid) {
       this.drawGrid();
    }
+}
+
+Plot.prototype.clearAxes = function() {
+   var context = this.coordContext;
+   context.clearRect(0, 0, this.coordCanvas.width, this.coordCanvas.height);
 }
 
 Plot.prototype.drawAxes = function() {
@@ -137,9 +148,6 @@ Plot.prototype.drawRect = function(coordArray, color, thickness) {
 }
 
 Plot.prototype.identifyRect = function(coordArray, color, thickness) {
-   // ...
-
-   /*
    // coordArray = [x1, y1, x2, y2]
    var context = this.context;
 
@@ -147,15 +155,148 @@ Plot.prototype.identifyRect = function(coordArray, color, thickness) {
    context.lineWidth = thickness;
    context.strokeStyle = color;
 
-   var x1 = this.centerPixel[0] + (coordArray[0] * this.pixelsPerUnit[0]) - 2;
-   var y1 = this.centerPixel[1] + (coordArray[1] * this.pixelsPerUnit[1]) - 2;
-   var x2 = this.centerPixel[0] + (coordArray[2] * this.pixelsPerUnit[0]) + 2;
-   var y2 = this.centerPixel[1] + (coordArray[3] * this.pixelsPerUnit[1]) + 2;
+   var x1 = this.centerPixel[0] + (coordArray[0] * this.pixelsPerUnit[0]);
+   var y1 = this.centerPixel[1] + (coordArray[1] * this.pixelsPerUnit[1]);
+   var x2 = this.centerPixel[0] + (coordArray[2] * this.pixelsPerUnit[0]);
+   var y2 = this.centerPixel[1] + (coordArray[3] * this.pixelsPerUnit[1]);
+
+   // Figure out the relative orientation of (x1, y1) and (x2, y2) and set the
+   // identifying box accordingly
+   // /***/ You'll need to figure this out again if you flip the y coordinates
+   // in pixel space
+   if (x1 < x2 && y1 < y2) {
+      // NW to SE
+      x1 -= 2;
+      y1 -= 2;
+      x2 += 2;
+      y2 += 2;
+   } else if (x1 > x2 && y1 > y2) {
+      // SE to NW
+      x1 += 2;
+      y1 += 2;
+      x2 -= 2;
+      y2 -= 2;
+   } else if (x1 < x2 && y1 > y2) {
+      // SW to NE
+      x1 -= 2;
+      y1 += 2;
+      x2 += 2;
+      y2 -= 2;
+   } else if (x1 > x2 && y1 < y2) {
+      // NE to SW
+      x1 += 2;
+      y1 -= 2;
+      x2 -= 2;
+      y2 += 2;
+   } else {
+      // Something is wrong
+      console.log('fuck');
+   }
 
    context.rect(x1, y1, x2 - x1, y2 - y1);
    context.stroke();
-    */
 }
+
+Plot.prototype.setOrigin = function(x_coord, y_coord, x, y) {
+   // (x, y) represent the desired origin position with respect to the NW
+   // corner of the canvas
+   this.clearAxes();
+
+   // Find (x0, y0) -- the current pixel position of the origin wrt. the NW corner
+   // of the canvas
+   var x0 = -(this.axes[0].min - x_coord) * this.pixelsPerUnit[0];
+   var y0 = -(this.axes[1].min - y_coord) * this.pixelsPerUnit[1];
+
+   console.log(x_coord, y_coord);
+
+   // Need to shift the graph by ___ in coordinate units
+   var x_shift = (x - x0) / this.pixelsPerUnit[0];
+   var y_shift = (y - y0) / this.pixelsPerUnit[1];
+
+   // Reset the axes' min/max values accordingly
+   this.axes[0].min -= x_shift;
+   this.axes[0].max -= x_shift;
+   this.axes[1].min -= y_shift;
+   this.axes[1].max -= y_shift;
+
+   // Redraw axes
+   this.init();
+}
+
+Plot.prototype.setScaleX = function(x0) {
+   // terrible
+   this.setScaleX_x0 = x0; // in pixels
+   var x_origin = -this.axes[0].min * this.pixelsPerUnit[0];
+
+   // Original axis limits
+   this.axes[0].min0 = this.axes[0].min;
+   this.axes[0].max0 = this.axes[0].max;
+}
+
+Plot.prototype.scaleX = function(x) {
+   // x0: start-drag location, in pixels
+   // x_origin: origin location, in pixels
+   // x: end-drag location, in pixels
+   var x0 = this.setScaleX_x0;
+   var x_origin = -this.axes[0].min * this.pixelsPerUnit[0];
+
+   // Set scaling factor for axes
+   var delta = (x - x0) / 100;
+   var scale = Math.pow(2, delta);
+
+   var tooLarge = (this.axes[0].max0 - this.axes[0].min0) / scale > 20;
+   var tooSmall = (this.axes[0].max0 - this.axes[0].min0) / scale < 0.5;
+
+   if (!tooLarge && !tooSmall) {
+      this.axes[0].min = this.axes[0].min0 / scale;
+      this.axes[0].max = this.axes[0].max0 / scale;
+
+      // Clear axes
+      this.clearAxes();
+
+      // Redraw axes
+      this.init();
+   }
+}
+
+Plot.prototype.setScaleY = function(y0) {
+   // terrible
+   this.setScaleY_y0 = y0; // in pixels
+   var y_origin = -this.axes[1].min * this.pixelsPerUnit[1];
+
+   // Original axis limits
+   this.axes[1].min0 = this.axes[1].min;
+   this.axes[1].max0 = this.axes[1].max;
+}
+
+Plot.prototype.scaleY = function(y) {
+   // y0: start-drag location, in pixels
+   // y_origin: origin location, in pixels
+   // y: end-drag location, in pixels
+   var y0 = this.setScaleY_y0;
+   var y_origin = -this.axes[1].min * this.pixelsPerUnit[1];
+
+   // Set scaling factor for axes
+   var delta = (y - y0) / 100;
+   var scale = Math.pow(2, delta);
+
+   var tooLarge = (this.axes[1].max0 - this.axes[1].min0) / scale > 20;
+   var tooSmall = (this.axes[1].max0 - this.axes[1].min0) / scale < 0.5;
+
+   if (!tooLarge && !tooSmall) {
+      this.axes[1].min = this.axes[1].min0 / scale;
+      this.axes[1].max = this.axes[1].max0 / scale;
+
+      // Clear axes
+      this.clearAxes();
+
+      // Redraw axes
+      this.init();
+   }
+}
+
+
+
 
 
 

@@ -20,6 +20,7 @@ Detectors.prototype.addDetector = function(id, name, color, path) {
    document.getElementById("detectorButtons").appendChild(button);
 
    this[id] = {
+      'id' : id,
       'button' : button,   // DOM element
       'path' : path,
       'color' : color,
@@ -28,7 +29,7 @@ Detectors.prototype.addDetector = function(id, name, color, path) {
       'stations' : {},      // will contain station coordinates, etc. later
 
       // station coords expressed in (eta1, phi1, eta2, phi2)
-      'addStation' : function(id, coords) {
+      'addStation' : function(stationID, coords) {
          // wraparound stuff in phi. deal with this later in the c code /***/
 
          if (Math.abs(coords[3] - coords[1]) > Math.PI) {
@@ -39,8 +40,9 @@ Detectors.prototype.addDetector = function(id, name, color, path) {
             }
          }
 
-         this.stations[id] = {
-            'id' : id,
+         this.stations[stationID] = {
+            'id' : stationID,
+            'detectorType' : this,
             'coords' : coords,
             'draw' : function(plot) {
                plot.drawRect(coords, color, 2);
