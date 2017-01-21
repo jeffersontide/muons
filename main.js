@@ -9,14 +9,21 @@ function init() {
    document.getElementById("locate").onclick = locateElement;
    document.getElementById("clearPlotImage").onclick = clearPlotImage;
    document.getElementById("imgInput").onchange = loadPlotImage;
+   document.getElementById("clearPlotPDF").onclick = clearPlotPDF;
+   document.getElementById("pdfInput").onchange = loadPlotPDF;
    document.getElementById("clearHold").onclick = unholdStations;
    document.getElementById("locateCoord").onclick = locateElementsByCoord;
 
    // Set up canvas plot
+   resizeCanvas("600", "400");
+   document.getElementById("map").style.width = "600px";
+   document.getElementById("map").style.height = "400px";
+
    window.etaAxis = new Axis('eta', -2.6, 2.6, 0.5, 'abs', '#000000', 'linear');
    window.phiAxis = new Axis('phi', -3.2, 3.2, 0.5, 'abs', '#000000', 'linear');
    window.plot = new Plot("plotCanvas", "coordCanvas",
-                          [window.etaAxis, window.phiAxis], "", true);
+                          [window.etaAxis, window.phiAxis], "eta-phi", false,
+                          [0, 0]);
 
    // Set up plot manipulation
    document.getElementById("setOrigin").onclick = setOriginCallback;
@@ -50,6 +57,17 @@ function init() {
 // Plot manipulation //
 // ================= //
 
+function resizeCanvas(width, height) {
+   // Resize canvas
+   var canvases = document.getElementsByTagName("canvas");
+   for (var i = 0; i < canvases.length; i++) {
+      canvases[i].width = width;
+      canvases[i].height = height;
+   }
+
+   // Redraw
+}
+
 function stopClickEvent(e) {
    e.stopPropagation();
    window.removeEventListener('click', stopClickEvent, true);
@@ -57,9 +75,6 @@ function stopClickEvent(e) {
 
 // Start setOrigin process
 function setOriginCallback() {
-   // Make some warning text
-   console.log("setting origin...");
-
    // Set a listener for the next mousedown within the window
    window.addEventListener('mousedown', setOrigin_mousedown, true);
 
@@ -80,6 +95,9 @@ function setOrigin_mousedown(e) {
                    e.clientY < mapRect.bottom;
 
    if (insideMap) {
+      // Draw grid
+      window.plot.grid = true;
+
       // Fire off the first movement
       var x = e.clientX - mapRect.left;
       var y = e.clientY - mapRect.top;
@@ -100,7 +118,6 @@ function setOrigin_mousedown(e) {
    } else {
       window.removeEventListener('mousedown', setOrigin_mousedown, true);
       map.style.cursor = 'auto';
-      console.log("done setting origin.");
    }
 
    // Prevent the mousedown event from propagating forward
@@ -132,14 +149,14 @@ function setOrigin_mouseup(e) {
    window.removeEventListener('mousemove', setOrigin_mousemove, true);
    window.removeEventListener('mouseup', setOrigin_mouseup, true);
 
+   window.plot.grid = false;
+   window.plot.init();
+
    e.stopPropagation();
 }
 
 // Start scaleX process
 function scaleXCallback() {
-   // Make some warning text
-   console.log("scaling x...");
-
    // Set a listener for the next mousedown within the window
    window.addEventListener('mousedown', scaleX_mousedown, true);
 
@@ -161,6 +178,8 @@ function scaleX_mousedown(e) {
    e.clientY < mapRect.bottom;
 
    if (insideMap) {
+      window.plot.grid = true;
+
       // get the pixel coordinates of the click (relative to the NW corner of
       // the canvas) and report this to window.plot
       var x0 = e.clientX - mapRect.left;
@@ -173,7 +192,6 @@ function scaleX_mousedown(e) {
    } else {
       window.removeEventListener('mousedown', scaleX_mousedown, true);
       map.style.cursor = 'auto';
-      console.log("done scaling x.");
    }
 
    // Prevent the mousedown event from propagating forward
@@ -202,15 +220,15 @@ function scaleX_mouseup(e) {
    window.removeEventListener('mousemove', scaleX_mousemove, true);
    window.removeEventListener('mouseup', scaleX_mouseup, true);
 
+   window.plot.grid = false;
+   window.plot.init();
+
    // Prevent forward propagation
    e.stopPropagation();
 }
 
 // Start scaleY process
 function scaleYCallback() {
-   // Make some warning text
-   console.log("scaling y...");
-
    // Set a listener for the next mousedown within the window
    window.addEventListener('mousedown', scaleY_mousedown, true);
 
@@ -231,6 +249,8 @@ function scaleY_mousedown(e) {
    e.clientY < mapRect.bottom;
 
    if (insideMap) {
+      window.plot.grid = true;
+
       // get the pixel coordinates of the click (relative to the NW corner of
       // the canvas) and report this to window.plot
       var y0 = e.clientY - mapRect.top;
@@ -243,7 +263,6 @@ function scaleY_mousedown(e) {
    } else {
       window.removeEventListener('mousedown', scaleY_mousedown, true);
       map.style.cursor = 'auto';
-      console.log("done scaling y.");
    }
 
    // Prevent the mousedown event from propagating forward
@@ -254,7 +273,7 @@ function scaleY_mousemove(e) {
    // Find the x coordinate of the mouse wrt. the NW corner of the canvas
    var map = document.getElementById("map");
    var mapRect = map.getBoundingClientRect();
-   var y = e.clientY - mapRect.left;
+   var y = e.clientY - mapRect.top;
 
    // Send this to the plot
    window.plot.scaleY(y);
@@ -272,6 +291,9 @@ function scaleY_mouseup(e) {
    window.removeEventListener('mousemove', scaleY_mousemove, true);
    window.removeEventListener('mouseup', scaleY_mouseup, true);
 
+   window.plot.grid = false;
+   window.plot.init();
+
    // Prevent forward propagation
    e.stopPropagation();
 }
@@ -286,16 +308,16 @@ function loadPlotImage() {
    // If no image was uploaded (the dialog was cancelled), don't do anything
    if (!this.value) { return; }
 
+   // Clear the background PDF
+   // ...
+
    // Create a filereader object
    var reader = new FileReader();
 
    // Set the filereader to update the background image in the plot (image)
    // element as a dataURL
    reader.onload = function(e) {
-
       document.getElementById("foo").src = e.target.result;
-      //document.getElementById("foo").style.background = "url("
-        // + e.target.result + ")";
    }
 
    reader.readAsDataURL(this.files[0]);
@@ -303,10 +325,88 @@ function loadPlotImage() {
 
 // Clear background image for the plot
 function clearPlotImage() {
-   document.getElementById("foo").style.background = "";
+   document.getElementById("foo").src = "";
 
    // Reset file prompt dialog
    document.getElementById("imgInput").value = "";
+}
+
+// ============== //
+// Background PDF //
+// ============== //
+
+function loadPlotPDF() {
+   // If no file was uploaded (the dialogw as cancelled), don't do anything
+   if (!this.value) { return; }
+
+   // Clear the background image
+   clearPlotImage();
+
+   var reader = new FileReader();
+
+   reader.onload = function(e) {
+      // PDF.js to the rescue
+      PDFJS.disableWorker = true;
+
+      console.log(reader.result);
+
+      PDFJS.getDocument(reader.result).then(function getPDF(pdf) {
+            // Get page number
+            var pageNumber = parseInt(document.getElementById("pageNumber").value);
+            if (!pageNumber) { pageNumber = 1; }
+
+            pdf.getPage(1).then(function getPageHelloWorld(page) {
+               var scale = 1;
+               var viewport = page.getViewport(scale);
+
+               // Prepare canvas using PDF page dimensions
+               var canvas = document.getElementById('imageCanvas');
+               var context = canvas.getContext('2d');
+             
+               // Render PDF page into canvas context
+               var task = page.render({canvasContext: context, viewport:
+                                      viewport});
+
+
+            });
+         }
+      );
+   }
+
+   reader.readAsArrayBuffer(this.files[0]);
+}
+
+function clearPlotPDF() {
+   var canvas = document.getElementById("imageCanvas");
+   var context = canvas.getContext('2d');
+   context.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+
+// ========== //
+// Render PDF //
+// ========== //
+
+function PDFToImage() {
+   var url = 'ep3.pdf';
+
+   PDFJS.disableWorker = true;
+
+   // Asynchronous download PDF as an ArrayBuffer
+   PDFJS.getDocument(url).then(function getPdfHelloWorld(pdf) {
+      // Fetch the first page
+      pdf.getPage(1).then(function getPageHelloWorld(page) {
+         var scale = 1;
+         var viewport = page.getViewport(scale);
+
+         // Prepare canvas using PDF page dimensions
+         var canvas = document.getElementById('imageCanvas');
+         var context = canvas.getContext('2d');
+
+         // Render PDF page into canvas context
+         page.render({canvasContext: context, viewport: viewport});
+      });
+   });
 }
 
 

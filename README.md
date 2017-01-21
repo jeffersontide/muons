@@ -1,0 +1,60 @@
+Notes
+=====
+
+1. just running this out of box locally doesn't work for some reason, so launch server: python3 -m http.server
+
+2. OSX 10.10.5 / Chrome Version 55.0.2883.95 (64-bit)
+
+
+F 2017-01-20
+============
+
+Added
+-----
+1. identify box w/ border when hovering over it in list
+2. double-click on held station ID to remove from list
+3. plot manipulation
+4. image auto-resize to fit canvas
+5. added pdf stuff, which is not understood whatsoever
+6. pdf.js, thank you whoever wrote it
+
+TODO
+----
+1. crappy deselect thing in the hold text list
+2. disable selection when manipulating plot
+3. set origin for plot so axes will be out of the way
+4. any loaded pdf's might remain sitting around taking up space, check this
+5. click is sticking when manipulating plot while hovering over boxes
+
+
+W 2017-01-18
+==============
+
+TODO
+----
+1. plot margins etc.
+2. image click-drag / rescale
+3. pdf reader
+
+check
+-----
+1. may need to flip y axis during coordinate-pixel transformation
+2. how to align background images
+
+
+T 2017-01-17
+============
+
+TODO
+----
+
+> * Could clicking on the plot freeze the highlighted detector elements, until the next click (or off-plot click)? Like, ideally, the user could do:
+>     * Hover over a given eta,phi location to see the relevant detector elements
+>     * Click to freeze
+>     * Copy the list of relevant detector elements with the cursor for using elsewhere
+> * Could there be an additional user text box for querying a specific eta,phi, instead of using the cursor? Like if the user is told there is a problem at eta=X.XXX and phi=Y.YYY, they could enter this directly instead of getting this approximately correct with the cursor.
+
+Done
+----
+1. Moved all CSS/javascript to separate files, got rid of jquery
+2. Need relative pixel translation of eta-phi

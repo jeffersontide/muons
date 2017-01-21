@@ -52,8 +52,6 @@ img {
 
 canvas {
    position: absolute;
-   left: 0px;
-   top: 0px;
 }
 
 span {
@@ -65,7 +63,7 @@ span {
 }
 
 div {
-   border: 3px solid #5500ff;
+   border: 1px solid #5500ff;
    margin: 5px;
 }
 
@@ -83,10 +81,34 @@ div.c2 {
    position: relative;
    left: 0px;
    top: 0px;
-   width: 545px;
-   height: 461px;
+   overflow: hidden;
+   resize:both;
 }
 
 #mousePos {
    height: 50px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

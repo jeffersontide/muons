@@ -12,21 +12,24 @@ function Axis(id, min, max, step, stepType, color, scale) {
 }
 
 // Plot object
-function Plot(canvasID, coordCanvas, axes, image, title, grid) {
+function Plot(canvasID, coordCanvas, axes, title, grid, origin) {
    this.canvas = document.getElementById(canvasID);
    this.coordCanvas = document.getElementById(coordCanvas);
    this.context = this.canvas.getContext('2d');
    this.coordContext = this.coordCanvas.getContext('2d');
    this.axes = axes;       // array of 2 Axis objects, ordered
-   this.image = image;     // source (address or dataURL)
    this.title = title;
    this.grid = grid;       // Boolean
    this.tickSize = 10;
+   this.origin = origin;
 
    this.init();
 }
 
 Plot.prototype.init = function() {
+   // Clear canvas
+   this.clearAxes();
+
    // Axis range in coordinate units
    this.range = [this.axes[0].max - this.axes[0].min,
                  this.axes[1].max - this.axes[1].min];
@@ -41,13 +44,13 @@ Plot.prototype.init = function() {
                        Math.round(Math.abs(this.axes[1].min / this.range[1])
                                   * this.canvas.height)];
 
-   // Draw axes
-   this.drawAxes();
-
    // Draw grid
    if (this.grid) {
       this.drawGrid();
    }
+
+   // Draw axes
+   this.drawAxes();
 }
 
 Plot.prototype.clearAxes = function() {
@@ -55,49 +58,80 @@ Plot.prototype.clearAxes = function() {
    context.clearRect(0, 0, this.coordCanvas.width, this.coordCanvas.height);
 }
 
+// never touch this again
 Plot.prototype.drawAxes = function() {
    var context = this.coordContext;
-   var incr, pos;
+   var incr, pos, step;
+
+   // Set draw settings
+   context.strokeStyle = "#000000";
+   context.lineWidth = 1;
+   context.textAlign = 'center';
+   context.textBaseline = 'middle';
 
    // Draw horizontal axis
    context.beginPath();
    context.moveTo(0, this.centerPixel[1]);
    context.lineTo(this.canvas.width, this.centerPixel[1]);
-   context.strokeStyle = "#000000";
-   context.lineWidth = 1;
    context.stroke();
 
    // Draw horizontal axis tick marks
    if (this.axes[0].stepType == 'abs') {
-      incr = this.pixelsPerUnit[0] * this.axes[0].step;
+      step = this.axes[0].step;
+      incr = this.pixelsPerUnit[0] * step;
    } else if (this.axes[0].stepType == 'num') {
-      incr = this.pixelsPerUnit[0] * (this.range[0] / this.axes[0].step);
+      step = this.range[0] / this.axes[0].step;
+      incr = this.pixelsPerUnit[0] * step;
    }
 
+   var unitsPerLabel = Math.round(1.0 / step);
+
+   // Left side ticks
    pos = this.centerPixel[0] - incr;
+   tick = -1;
+   unit = -1;
+
    while (pos > 0) {
       context.beginPath();
       context.moveTo(pos, this.centerPixel[1] - this.tickSize / 2);
       context.lineTo(pos, this.centerPixel[1] + this.tickSize / 2);
       context.stroke();
+
+      // Draw tick markers
+      if (Math.abs(tick) % unitsPerLabel == 0) {
+         context.fillText(unit, pos, this.centerPixel[1] + this.tickSize / 2 + 5);
+         unit--;
+      }
+
       pos = Math.round(pos - incr);
+      tick--;
    }
 
+   // Right side ticks
    pos = this.centerPixel[0] + incr;
+   unit = 1;
+   tick = 1;
+
    while (pos < this.canvas.width) {
       context.beginPath();
       context.moveTo(pos, this.centerPixel[1] - this.tickSize / 2);
       context.lineTo(pos, this.centerPixel[1] + this.tickSize / 2);
       context.stroke();
+
+      // Draw tick markers
+      if (Math.abs(tick) % unitsPerLabel == 0) {
+         context.fillText(unit, pos, this.centerPixel[1] + this.tickSize / 2 + 5);
+         unit++;
+      }
+
       pos = Math.round(pos + incr);
+      tick++;
    }
 
    // Draw vertical axis
    context.beginPath();
    context.moveTo(this.centerPixel[0], 0);
    context.lineTo(this.centerPixel[0], this.canvas.height);
-   context.strokeStyle = "#000000";
-   context.lineWidth = 1;
    context.stroke();
 
    // Draw vertical axis tick marks
@@ -107,11 +141,94 @@ Plot.prototype.drawAxes = function() {
       incr = this.pixelsPerUnit[1] * (this.range[1] / this.axes[1].step);
    }
 
+   unitsPerLabel = Math.round(1.0 / step);
+
+   // Bottom ticks
    pos = this.centerPixel[1] - incr;
+   unit = -1;
+   tick = -1;
+
    while (pos > 0) {
       context.beginPath();
       context.moveTo(this.centerPixel[0] - this.tickSize / 2, pos);
       context.lineTo(this.centerPixel[0] + this.tickSize / 2, pos);
+      context.stroke();
+
+      // Label ticks
+      if (Math.abs(tick) % unitsPerLabel == 0) {
+         context.fillText(-unit, this.centerPixel[0] - this.tickSize / 2 - 5, pos);
+         unit--;
+      }
+
+      pos = Math.round(pos - incr);
+      tick--;
+   }
+
+   // Top ticks
+   pos = this.centerPixel[1] + incr;
+   unit = 1;
+   tick = 1;
+
+   while (pos < this.canvas.width) {
+      context.beginPath();
+      context.moveTo(this.centerPixel[0] - this.tickSize / 2, pos);
+      context.lineTo(this.centerPixel[0] + this.tickSize / 2, pos);
+      context.stroke();
+
+      if (Math.abs(tick) % unitsPerLabel == 0) {
+         context.fillText(-unit, this.centerPixel[0] - this.tickSize / 2 - 5, pos);
+         unit++;
+      }
+
+      pos = Math.round(pos + incr);
+      tick++;
+   }
+}
+
+Plot.prototype.drawGrid = function() {
+   var context = this.coordContext;
+   var incr, pos;
+
+   context.strokeStyle = "#aaaaaa";
+   context.lineWidth = 1;
+
+   // Draw vertical lines
+   if (this.axes[0].stepType == 'abs') {
+      incr = this.pixelsPerUnit[0] * this.axes[0].step;
+   } else if (this.axes[0].stepType == 'num') {
+      incr = this.pixelsPerUnit[0] * (this.range[0] / this.axes[0].step);
+   }
+
+   pos = this.centerPixel[0] - incr;
+   while (pos > 0) {
+      context.beginPath();
+      context.moveTo(pos, 0);
+      context.lineTo(pos, this.canvas.height);
+      context.stroke();
+      pos = Math.round(pos - incr);
+   }
+
+   pos = this.centerPixel[0] + incr;
+   while (pos < this.canvas.width) {
+      context.beginPath();
+      context.moveTo(pos, 0);
+      context.lineTo(pos, this.canvas.height);
+      context.stroke();
+      pos = Math.round(pos + incr);
+   }
+
+   // Draw horizontal lines
+   if (this.axes[1].stepType == 'abs') {
+      incr = this.pixelsPerUnit[1] * this.axes[1].step;
+   } else if (this.axes[1].stepType == 'num') {
+      incr = this.pixelsPerUnit[1] * (this.range[1] / this.axes[1].step);
+   }
+
+   pos = this.centerPixel[1] - incr;
+   while (pos > 0) {
+      context.beginPath();
+      context.moveTo(0, pos);
+      context.lineTo(this.canvas.width, pos);
       context.stroke();
       pos = Math.round(pos - incr);
    }
@@ -119,15 +236,11 @@ Plot.prototype.drawAxes = function() {
    pos = this.centerPixel[1] + incr;
    while (pos < this.canvas.width) {
       context.beginPath();
-      context.moveTo(this.centerPixel[0] - this.tickSize / 2, pos);
-      context.lineTo(this.centerPixel[0] + this.tickSize / 2, pos);
+      context.moveTo(0, pos);
+      context.lineTo(this.canvas.width, pos);
       context.stroke();
       pos = Math.round(pos + incr);
    }
-}
-
-Plot.prototype.drawGrid = function() {
-   // ...
 }
 
 Plot.prototype.drawRect = function(coordArray, color, thickness) {
@@ -200,7 +313,6 @@ Plot.prototype.identifyRect = function(coordArray, color, thickness) {
 Plot.prototype.setOrigin = function(x_coord, y_coord, x, y) {
    // (x, y) represent the desired origin position with respect to the NW
    // corner of the canvas
-   this.clearAxes();
 
    // Find (x0, y0) -- the current pixel position of the origin wrt. the NW corner
    // of the canvas
@@ -249,9 +361,6 @@ Plot.prototype.scaleX = function(x) {
       this.axes[0].min = this.axes[0].min0 / scale;
       this.axes[0].max = this.axes[0].max0 / scale;
 
-      // Clear axes
-      this.clearAxes();
-
       // Redraw axes
       this.init();
    }
@@ -276,7 +385,7 @@ Plot.prototype.scaleY = function(y) {
 
    // Set scaling factor for axes
    var delta = (y - y0) / 100;
-   var scale = Math.pow(2, delta);
+   var scale = Math.pow(2, -delta);
 
    var tooLarge = (this.axes[1].max0 - this.axes[1].min0) / scale > 20;
    var tooSmall = (this.axes[1].max0 - this.axes[1].min0) / scale < 0.5;
@@ -284,9 +393,6 @@ Plot.prototype.scaleY = function(y) {
    if (!tooLarge && !tooSmall) {
       this.axes[1].min = this.axes[1].min0 / scale;
       this.axes[1].max = this.axes[1].max0 / scale;
-
-      // Clear axes
-      this.clearAxes();
 
       // Redraw axes
       this.init();
