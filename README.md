@@ -24,6 +24,7 @@
 1. Make canvas resizeable
 2. Error message if locate element fails
 3. Locate element with regexp
+4. friendly helpful instructions
 5. Page w/ naming convention explanation & search suggestions
 6. implement:
 > Have drop-down menus, so that the user doesnt need to type anything. For example:
@@ -42,8 +43,7 @@
 > etc
 7. Implement:
 > Could the Locate Element feature allow for multiple locates simultaneously, using wildcards? Like, if the user entered *CSL*, all the CSL chambers would be highlighted?
-8. Other naming convention stuff
-9. 'status bar' to show errors, history, etc.
+8. label 'eta' & 'phi'
 
 
 ### F 2017-01-20

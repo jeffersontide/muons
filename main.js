@@ -4,6 +4,8 @@
 // Setup //
 // ===== //
 function init() {
+   window.update = true;
+
    // Set form callbacks
    document.getElementById("clr").onclick = clearDetectors;
    document.getElementById("locate").onclick = locateElement;
@@ -579,6 +581,10 @@ function loadDetectorData(detectorID) {
 // ================== //
 
 function updateDetectors() {
+   if (!window.update) {
+      return;
+   }
+
    // Clear plot
    var plotCanvas = document.getElementById("plotCanvas");
    var plotContext = plotCanvas.getContext('2d');
@@ -627,6 +633,8 @@ function updateDetectors() {
       element.style.borderColor = holdStationList[i].detectorType.color;
       element.id = holdStationList[i].id;
       element.innerHTML = element.id;
+      element.onmousedown = function() { window.update = false; };
+      element.onmouseup = function() { window.update = true; };
       element.onmouseover = identifyStation;
       element.onmouseout = updateDetectors;
       element.ondblclick = unholdStation;
@@ -680,8 +688,6 @@ function findStations(x, y, options) {
 
 // Put a big box around the station if hovered over in the hold list
 function identifyStation() {
-   this.parentElement.focus();
-
    // Find the id in window.holdList; the corresponding object should represent
    // the whole station
    for (var i = 0; i < window.holdList.length; i++) {
