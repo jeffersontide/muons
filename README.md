@@ -1,16 +1,54 @@
-Notes
-=====
+# Muon Spectrometer Detector Elements website
+
+## Notes
 
 1. just running this out of box locally doesn't work for some reason, so launch server: python3 -m http.server
 
 2. OSX 10.10.5 / Chrome Version 55.0.2883.95 (64-bit)
 
 
-F 2017-01-20
-============
+## Log
 
-Added
------
+### U 2017-01-22
+
+#### oh no
+1. Some weird pixel jump going on that messes up the tick mark spacing when the ticks are scrunched together
+
+#### Done
+1. Plot hover --> crosshair
+2. Set point fixed
+3. Scale axes fixed
+4. Plot manipulation buttons highlighted when active
+
+#### TODO
+1. Make canvas resizeable
+2. Error message if locate element fails
+3. Locate element with regexp
+5. Page w/ naming convention explanation & search suggestions
+6. implement:
+> Have drop-down menus, so that the user doesnt need to type anything. For example:
+> 
+> [ MDT ]
+> CSC
+> RPC
+> TGC
+> 
+> ... user chooses CSC, for example ...
+> 
+> [ cscCSL1A01 ]
+> cscCSL1A03
+> cscCSL1A05
+> cscCSL1A07
+> etc
+7. Implement:
+> Could the Locate Element feature allow for multiple locates simultaneously, using wildcards? Like, if the user entered *CSL*, all the CSL chambers would be highlighted?
+8. Other naming convention stuff
+9. 'status bar' to show errors, history, etc.
+
+
+### F 2017-01-20
+
+#### Added
 1. identify box w/ border when hovering over it in list
 2. double-click on held station ID to remove from list
 3. plot manipulation
@@ -18,8 +56,7 @@ Added
 5. added pdf stuff, which is not understood whatsoever
 6. pdf.js, thank you whoever wrote it
 
-TODO
-----
+#### TODO
 1. crappy deselect thing in the hold text list
 2. disable selection when manipulating plot
 3. set origin for plot so axes will be out of the way
@@ -27,26 +64,21 @@ TODO
 5. click is sticking when manipulating plot while hovering over boxes
 
 
-W 2017-01-18
-==============
+### W 2017-01-18
 
-TODO
-----
+#### TODO
 1. plot margins etc.
 2. image click-drag / rescale
 3. pdf reader
 
-check
------
+#### check
 1. may need to flip y axis during coordinate-pixel transformation
 2. how to align background images
 
 
-T 2017-01-17
-============
+### T 2017-01-17
 
-TODO
-----
+#### TODO
 
 > * Could clicking on the plot freeze the highlighted detector elements, until the next click (or off-plot click)? Like, ideally, the user could do:
 >     * Hover over a given eta,phi location to see the relevant detector elements
@@ -54,7 +86,6 @@ TODO
 >     * Copy the list of relevant detector elements with the cursor for using elsewhere
 > * Could there be an additional user text box for querying a specific eta,phi, instead of using the cursor? Like if the user is told there is a problem at eta=X.XXX and phi=Y.YYY, they could enter this directly instead of getting this approximately correct with the cursor.
 
-Done
-----
+#### Done
 1. Moved all CSS/javascript to separate files, got rid of jquery
 2. Need relative pixel translation of eta-phi

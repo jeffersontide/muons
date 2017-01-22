@@ -16,8 +16,10 @@ function init() {
 
    // Set up canvas plot
    resizeCanvas("600", "400");
-   document.getElementById("map").style.width = "600px";
-   document.getElementById("map").style.height = "400px";
+   var map = document.getElementById("map");
+   map.style.width = "600px";
+   map.style.height = "400px";
+   map.style.cursor = "crosshair";
 
    window.etaAxis = new Axis('eta', -2.6, 2.6, 0.5, 'abs', '#000000', 'linear');
    window.phiAxis = new Axis('phi', -3.2, 3.2, 0.5, 'abs', '#000000', 'linear');
@@ -66,6 +68,7 @@ function resizeCanvas(width, height) {
    }
 
    // Redraw
+   // ...fix later
 }
 
 function stopClickEvent(e) {
@@ -83,6 +86,9 @@ function setOriginCallback() {
    window.addEventListener('click', stopClickEvent, true);
 
    document.getElementById("map").style.cursor = 'crosshair';
+
+   document.getElementById("setOrigin").style.margin = "2px";
+   document.getElementById("setOrigin").style.borderWidth = "4px";
 }
 
 function setOrigin_mousedown(e) {
@@ -116,8 +122,10 @@ function setOrigin_mousedown(e) {
       window.addEventListener('mousemove', setOrigin_mousemove, true);
       window.addEventListener('mouseup', setOrigin_mouseup, true);
    } else {
+      document.getElementById("setOrigin").style.margin = "5px";
+      document.getElementById("setOrigin").style.borderWidth = "1px";
       window.removeEventListener('mousedown', setOrigin_mousedown, true);
-      map.style.cursor = 'auto';
+      map.style.cursor = 'crosshair';
    }
 
    // Prevent the mousedown event from propagating forward
@@ -150,7 +158,7 @@ function setOrigin_mouseup(e) {
    window.removeEventListener('mouseup', setOrigin_mouseup, true);
 
    window.plot.grid = false;
-   window.plot.init();
+   window.plot.update();
 
    e.stopPropagation();
 }
@@ -165,6 +173,9 @@ function scaleXCallback() {
    window.addEventListener('click', stopClickEvent, true);
 
    document.getElementById("map").style.cursor = 'col-resize';
+
+   document.getElementById("scaleX").style.margin = "2px";
+   document.getElementById("scaleX").style.borderWidth = "4px";
 }
 
 function scaleX_mousedown(e) {
@@ -191,7 +202,10 @@ function scaleX_mousedown(e) {
       window.addEventListener('mouseup', scaleX_mouseup, true);
    } else {
       window.removeEventListener('mousedown', scaleX_mousedown, true);
-      map.style.cursor = 'auto';
+      map.style.cursor = 'crosshair';
+
+      document.getElementById("scaleX").style.margin = "5px";
+      document.getElementById("scaleX").style.borderWidth = "1px";
    }
 
    // Prevent the mousedown event from propagating forward
@@ -221,7 +235,7 @@ function scaleX_mouseup(e) {
    window.removeEventListener('mouseup', scaleX_mouseup, true);
 
    window.plot.grid = false;
-   window.plot.init();
+   window.plot.update();
 
    // Prevent forward propagation
    e.stopPropagation();
@@ -237,6 +251,9 @@ function scaleYCallback() {
    window.addEventListener('click', stopClickEvent, true);
 
    document.getElementById("map").style.cursor = 'row-resize';
+
+   document.getElementById("scaleY").style.margin = "2px";
+   document.getElementById("scaleY").style.borderWidth = "4px";
 }
 
 function scaleY_mousedown(e) {
@@ -262,7 +279,10 @@ function scaleY_mousedown(e) {
       window.addEventListener('mouseup', scaleY_mouseup, true);
    } else {
       window.removeEventListener('mousedown', scaleY_mousedown, true);
-      map.style.cursor = 'auto';
+      map.style.cursor = 'crosshair';
+
+      document.getElementById("scaleY").style.margin = "5px";
+      document.getElementById("scaleY").style.borderWidth = "1px";
    }
 
    // Prevent the mousedown event from propagating forward
@@ -292,7 +312,7 @@ function scaleY_mouseup(e) {
    window.removeEventListener('mouseup', scaleY_mouseup, true);
 
    window.plot.grid = false;
-   window.plot.init();
+   window.plot.update();
 
    // Prevent forward propagation
    e.stopPropagation();
@@ -308,8 +328,9 @@ function loadPlotImage() {
    // If no image was uploaded (the dialog was cancelled), don't do anything
    if (!this.value) { return; }
 
-   // Clear the background PDF
-   // ...
+   // Clear the background image/PDF
+   clearPlotImage();
+   clearPlotPDF();
 
    // Create a filereader object
    var reader = new FileReader();
@@ -317,7 +338,12 @@ function loadPlotImage() {
    // Set the filereader to update the background image in the plot (image)
    // element as a dataURL
    reader.onload = function(e) {
-      document.getElementById("foo").src = e.target.result;
+      try {
+         document.getElementById("foo").src = e.target.result;
+      }
+      catch (err) {
+         console.log('error: ', err);
+      }
    }
 
    reader.readAsDataURL(this.files[0]);
@@ -336,47 +362,56 @@ function clearPlotImage() {
 // ============== //
 
 function loadPlotPDF() {
-   // If no file was uploaded (the dialogw as cancelled), don't do anything
+   // If no file was uploaded (the dialog was cancelled), don't do anything
    if (!this.value) { return; }
 
-   // Clear the background image
+   // Clear the background image/PDF
    clearPlotImage();
+   clearPlotPDF();
 
    var reader = new FileReader();
 
    reader.onload = function(e) {
-      // PDF.js to the rescue
-      PDFJS.disableWorker = true;
+      try {
+         // PDF.js to the rescue
+         PDFJS.disableWorker = true;
 
-      console.log(reader.result);
+         PDFJS.getDocument(reader.result).then(function getPDF(pdf) {
+               // Get page number
+               var numPages = pdf.numPages;
+               var pageNumber = document.getElementById("pageNumber").value;
+               if (!pageNumber) { pageNumber = '1'; }
+               pageNumber = parseInt(pageNumber);
+               if (pageNumber <= 0 || pageNumber > pdf.numPages) {
+                  console.log('error: page # not within acceptable range');
+                  return;
+               }
 
-      PDFJS.getDocument(reader.result).then(function getPDF(pdf) {
-            // Get page number
-            var pageNumber = parseInt(document.getElementById("pageNumber").value);
-            if (!pageNumber) { pageNumber = 1; }
+               pdf.getPage(pageNumber).then(function getPage(page) {
+                  var scale = 1;
+                  var viewport = page.getViewport(scale);
 
-            pdf.getPage(1).then(function getPageHelloWorld(page) {
-               var scale = 1;
-               var viewport = page.getViewport(scale);
-
-               // Prepare canvas using PDF page dimensions
-               var canvas = document.getElementById('imageCanvas');
-               var context = canvas.getContext('2d');
-             
-               // Render PDF page into canvas context
-               var task = page.render({canvasContext: context, viewport:
-                                      viewport});
-
-
-            });
-         }
-      );
+                  // Prepare canvas using PDF page dimensions
+                  var canvas = document.getElementById('imageCanvas');
+                  var context = canvas.getContext('2d');
+                
+                  // Render PDF page into canvas context
+                  var task = page.render({canvasContext: context, viewport:
+                                         viewport});
+               });
+            }
+         );
+      }
+      catch (err) {
+         console.log('error:', err);
+      }
    }
 
    reader.readAsArrayBuffer(this.files[0]);
 }
 
 function clearPlotPDF() {
+   // This might leave the PDF image somewhere in memory -- check this
    var canvas = document.getElementById("imageCanvas");
    var context = canvas.getContext('2d');
    context.clearRect(0, 0, canvas.width, canvas.height);
@@ -711,19 +746,22 @@ function mousemoveCallback(e) {
    // Get mouse pixel coords
    var parentRect = window.mouse.parent.getBoundingClientRect();
    window.mouse.pixelx = e.clientX - parentRect.left;
-   window.mouse.pixely = e.clientY - parentRect.top;
+   window.mouse.pixely = parentRect.height - (e.clientY - parentRect.top);
 
    // Get mouse eta-phi coords
-   window.mouse.x = (window.mouse.pixelx - window.plot.centerPixel[0]) /
+   window.mouse.x = (window.mouse.pixelx - window.plot.originPixel[0]) /
       window.plot.pixelsPerUnit[0];
-   window.mouse.y = (window.mouse.pixely - window.plot.centerPixel[1]) /
+   window.mouse.y = (window.mouse.pixely - window.plot.originPixel[1]) /
       window.plot.pixelsPerUnit[1];
 
    // display relative mouse coords
+   /*
    var mouseStr = " mouse: " + window.mouse.pixelx.toString() + "  " +
       window.mouse.pixely.toString() + "<br/>";
-   var coordStr = " coords: " + window.mouse.x.toString() + "  " +
-      window.mouse.y.toString();
+   */ var mouseStr = "";
+
+   var coordStr = "&nbsp;coords: " + window.mouse.x.toFixed(3).toString() + "  " +
+      window.mouse.y.toFixed(3).toString();
    document.getElementById("mousePos").innerHTML = mouseStr + coordStr;
 
    updateDetectors();
