@@ -8,13 +8,13 @@
    <link rel="stylesheet" type="text/css" href="main.css">
 
    <!-- all Javascript functions -->
-   <script type="text/javascript" src="main.js"></script>
    <script type="text/javascript" src="plot.js"></script>
    <script type="text/javascript" src="detectors.js"></script>
    <script type="text/javascript" src="pdf.js"></script>
+   <script type="text/javascript" src="main.js"></script>
 </head>
 
-<body onload="init();">
+<body onload="init();" class="selectable">
    <!-- ugh    <div class="c1">
       <div class="c2">
          <canvas id="pdfCanvas"></canvas>
@@ -80,15 +80,16 @@
 
       <!-- display selected stations -->
       <div class="c2" style="display:inline-block;">
-         <div style="width:200px; height:200px; float:left; overflow:auto;" id="hoverStations">
+         <div style="width:200px; height:200px; float:left; overflow:auto;" id="hoverStations" class="unselectable">
             <!-- stations will be listed here when hovered over -->
          </div>
 
-         <div style="width:200px; height:200px; float:left; overflow:auto;" id="holdStations">
+         <div style="width:200px; height:200px; float:left; overflow:auto;" id="holdStations" class="unselectable">
             <!-- stations will be listed here when held -->
          </div>
 
          <br />
+         <button id="copyStations">Copy Stations</button>
          <button id="clearHold">Clear Holds</button>
       </div>
    </div>

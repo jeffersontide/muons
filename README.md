@@ -19,9 +19,11 @@
 2. Set point fixed
 3. Scale axes fixed
 4. Plot manipulation buttons highlighted when active
+5. Fixed selection problems, more or less
+6. Making canvas resizeable is a pain, esp for Chrome so leave that aside for now
 
 #### TODO
-1. Make canvas resizeable
+1. "load all" button
 2. Error message if locate element fails
 3. Locate element with regexp
 4. friendly helpful instructions
@@ -57,7 +59,7 @@
 6. pdf.js, thank you whoever wrote it
 
 #### TODO
-1. crappy deselect thing in the hold text list
+1. deselect thing in the hold text list
 2. disable selection when manipulating plot
 3. set origin for plot so axes will be out of the way
 4. any loaded pdf's might remain sitting around taking up space, check this

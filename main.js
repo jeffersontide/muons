@@ -8,21 +8,19 @@ function init() {
 
    // Set form callbacks
    document.getElementById("clr").onclick = clearDetectors;
-   document.getElementById("locate").onclick = locateElement;
+
    document.getElementById("clearPlotImage").onclick = clearPlotImage;
    document.getElementById("imgInput").onchange = loadPlotImage;
    document.getElementById("clearPlotPDF").onclick = clearPlotPDF;
    document.getElementById("pdfInput").onchange = loadPlotPDF;
+
+   document.getElementById("copyStations").onclick = copyStations;
    document.getElementById("clearHold").onclick = unholdStations;
+
+   document.getElementById("locate").onclick = locateElement;
    document.getElementById("locateCoord").onclick = locateElementsByCoord;
 
-   // Set up canvas plot
-   resizeCanvas("600", "400");
-   var map = document.getElementById("map");
-   map.style.width = "600px";
-   map.style.height = "400px";
-   map.style.cursor = "crosshair";
-
+   // Set up plot
    window.etaAxis = new Axis('eta', -2.6, 2.6, 0.5, 'abs', '#000000', 'linear');
    window.phiAxis = new Axis('phi', -3.2, 3.2, 0.5, 'abs', '#000000', 'linear');
    window.plot = new Plot("plotCanvas", "coordCanvas",
@@ -54,6 +52,10 @@ function init() {
 
    // Held stations, terrible
    window.holdList = [];
+
+   // Set up canvases
+   resizeCanvas(600, 400);
+   document.getElementById("map").style.cursor = 'crosshair';
 }
 
 
@@ -62,6 +64,9 @@ function init() {
 // ================= //
 
 function resizeCanvas(width, height) {
+   var width = width.toString();
+   var height = height.toString();
+
    // Resize canvas
    var canvases = document.getElementsByTagName("canvas");
    for (var i = 0; i < canvases.length; i++) {
@@ -69,8 +74,13 @@ function resizeCanvas(width, height) {
       canvases[i].height = height;
    }
 
-   // Redraw
-   // ...fix later
+   // Resize map
+   var map = document.getElementById("map");
+   map.style.width = width + "px";
+   map.style.height = height + "px";
+
+   window.plot.update();
+   updateDetectors();
 }
 
 function stopClickEvent(e) {
@@ -91,6 +101,7 @@ function setOriginCallback() {
 
    document.getElementById("setOrigin").style.margin = "2px";
    document.getElementById("setOrigin").style.borderWidth = "4px";
+   document.body.className = "unselectable";
 }
 
 function setOrigin_mousedown(e) {
@@ -128,6 +139,7 @@ function setOrigin_mousedown(e) {
       document.getElementById("setOrigin").style.borderWidth = "1px";
       window.removeEventListener('mousedown', setOrigin_mousedown, true);
       map.style.cursor = 'crosshair';
+      document.body.className = "selectable";
    }
 
    // Prevent the mousedown event from propagating forward
@@ -178,6 +190,8 @@ function scaleXCallback() {
 
    document.getElementById("scaleX").style.margin = "2px";
    document.getElementById("scaleX").style.borderWidth = "4px";
+
+   document.body.className = "unselectable";
 }
 
 function scaleX_mousedown(e) {
@@ -208,6 +222,8 @@ function scaleX_mousedown(e) {
 
       document.getElementById("scaleX").style.margin = "5px";
       document.getElementById("scaleX").style.borderWidth = "1px";
+
+      document.body.className = "selectable";
    }
 
    // Prevent the mousedown event from propagating forward
@@ -256,6 +272,8 @@ function scaleYCallback() {
 
    document.getElementById("scaleY").style.margin = "2px";
    document.getElementById("scaleY").style.borderWidth = "4px";
+
+   document.body.className = "unselectable";
 }
 
 function scaleY_mousedown(e) {
@@ -285,6 +303,7 @@ function scaleY_mousedown(e) {
 
       document.getElementById("scaleY").style.margin = "5px";
       document.getElementById("scaleY").style.borderWidth = "1px";
+      document.body.className = "selectable";
    }
 
    // Prevent the mousedown event from propagating forward
@@ -601,7 +620,7 @@ function updateDetectors() {
 
    // Get stations from current mouse position
    if (window.mouse.track) {
-      hoverStationList = findStations(window.mouse.x, window.mouse.y, 'hover');
+      hoverStationList = findStations(window.mouse.x, window.mouse.y);
    }
 
    for (var i = 0; i < hoverStationList.length; i++) {
@@ -616,7 +635,7 @@ function updateDetectors() {
    }
 
    // Deal with hold stations
-   var holdStationList = findStations(0, 0, 'hold');
+   var holdStationList = window.holdList;
    var holdElement = document.getElementById("holdStations");
 
    // Clear list
@@ -642,19 +661,7 @@ function updateDetectors() {
    }
 }
 
-function findStations(x, y, options) {
-   var hover = true;
-   var hold = true;
-
-   switch (options) {
-      case 'hover':
-         hold = false;
-         break;
-      case 'hold':
-         hover = false;
-         break;
-   }
-
+function findStations(x, y) {
    var stationList = [];
 
    // Iterate through all detectors & stations. Return station rectangles if
@@ -675,7 +682,7 @@ function findStations(x, y, options) {
                 y >= station.coords[3]
             );
 
-            if ((hold && station.hold) || (hover && hoverBool)) {
+            if (hoverBool) {
                // push the station onto the list
                stationList.push(station);
             }
@@ -703,7 +710,7 @@ function identifyStation() {
 }
 
 function holdStations(x, y) {
-   var stations = findStations(x, y, 'hover');
+   var stations = findStations(x, y);
 
    for (var i = 0; i < stations.length; i++) {
       stations[i].hold = true;
@@ -739,6 +746,24 @@ function unholdStation() {
    this.remove();
 
    updateDetectors();
+}
+
+function copyStations() {
+   // cough cough terrible ugh bad
+   stationElements = document.getElementsByTagName("span");
+
+   if (stationElements.length == 0) { return; }
+
+   var stationList = "";
+
+   for (var i = 0; i < stationElements.length; i++) {
+      stationList += stationElements[i].innerHTML;
+      if (i < stationElements.length - 1) {
+         stationList += "\n";
+      }
+   }
+
+   window.prompt('Press Ctrl-c to copy element list', stationList);
 }
 
 
