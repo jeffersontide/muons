@@ -394,7 +394,6 @@ function loadPlotPDF() {
 
    // Clear the background image/PDF
    clearPlotImage();
-   clearPlotPDF();
 
    var reader = new FileReader();
 
