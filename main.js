@@ -7,6 +7,17 @@ function init() {
    window.update = true;
 
    // Set form callbacks
+   var conventions = document.getElementsByName("convention");
+   for (var i = 0; i < conventions.length; i++) {
+      // Set callback
+      conventions[i].onclick = conventionCallback;
+
+      // Set initial variable
+      if (conventions[i].checked) {
+         window.convention = conventions[i].id;
+      }
+   }
+
    document.getElementById("clr").onclick = clearDetectors;
 
    document.getElementById("clearPlotImage").onclick = clearPlotImage;
@@ -467,6 +478,23 @@ function PDFToImage() {
 // Selecting detectors //
 // =================== //
 
+// Set naming convention
+function conventionCallback() {
+   if (this.checked) {
+      window.convention = this.id;
+   }
+}
+
+// Load all detectors
+function loadAll() {
+   var detectors = Object.keys(window.detectors);
+   for (var i = 0; i < detectors.length; i++) {
+      if (!detectors[i].loaded) {
+         loadDetectorData(detectors[i].id);
+      }
+   }
+}
+
 // Toggle a detector button
 function toggleDetector() {
    // Get detector handle ('this' refers to the button DOM object)
@@ -516,11 +544,19 @@ function clearDetectors() {
 
 // Locate stations
 function locateElement() {
-   var elementID = document.getElementById("detectorID").value;
+   var str = document.getElementById("detectorID").value;
 
    // If the box is empty, return
-   if (!elementID) {
+   if (!str) {
       return;
+   }
+
+   var re;
+
+   if (document.getElementById("regexpOption").checked) {
+      re = new RegExp(str);
+   } else {
+      re = wildcardToRegex(str);
    }
 
    // Loop through all selected detectors
@@ -528,19 +564,57 @@ function locateElement() {
    for (var i = 0; i < detectorList.length; i++) {
       var detector = window.detectors[detectorList[i]];
 
+      // If the detector type isn't selected, then move on
       if (!detector.selected) { continue; }
 
-      // ugh
-      if (detector.stations[elementID]) {
-         detector.stations[elementID].hold = true;
-         window.holdList.push(detector.stations[elementID]);
+      var stationList = Object.keys(detector.stations);
+      var match = false;
+
+      for (var j = 0; j < stationList.length; j++) {
+         var stationID = stationList[j];
+         match = re.test(stationID);
+         if (match) {
+            // Hold the station
+            detector.stations[stationID].hold = true;
+            window.holdList.push(detector.stations[stationID]);
+         }
       }
    }
 
-   // Print an error message if none found
-   // ...
-
    updateDetectors();
+}
+
+function wildcardToRegex(wildStr) {
+   var wild = wildStr.split("*");
+   var reStr = "";
+
+   // Asterisk at the beginning
+   if (wild[0] == "") {
+      reStr += ".*";
+      wild.splice(0, 1);
+   } else {
+      reStr += "^";
+   }
+
+   for (var i = 0; i < wild.length; i++) {
+      reStr += wild[i];
+      reStr += ".*";
+   }
+
+   console.log(wild);
+
+   // Doesn't end with an asterisk
+   if (wild.length > 0 && wild[wild.length - 1] != "") {
+      // Delete the last wildcard
+      reStr = reStr.slice(0, -2);
+      // Add an end marker
+      reStr += "$";
+   }
+
+   // I forget how Javascript handles this
+   var re = new RegExp(reStr);
+
+   return re;
 }
 
 function locateElementsByCoord() {
@@ -634,6 +708,9 @@ function updateDetectors() {
    // Deal with hold stations
    var holdStationList = window.holdList;
    var holdElement = document.getElementById("holdStations");
+
+   // Check for duplicates! Can be very confusing boo
+   // ...
 
    // Clear list
    while (holdElement.firstChild) {

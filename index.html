@@ -54,7 +54,19 @@
                <td id="detectorButtons">
                   <!-- buttons added dynamically -->
                </td>
+            <tr>
+            </tr>
                <td>
+                  Convention:
+                  <label>
+                     <input type="radio" name="convention" id="onlineConvention" />
+                     Online
+                  </label>
+                  <label>
+                     <input type="radio" name="convention" id="offlineConvention"checked="true" />
+                     Offline
+                  </label>
+                  <button id="loadAll">Load All</button>
                   <button id="clr">Clear</button>
                </td>
             </tr>
@@ -66,6 +78,15 @@
          &nbsp;Locate element by ID:&nbsp;
          <input id="detectorID" class=""></input>
          <button id="locate">Locate</button>
+         <br />
+         <label>
+            <input name="searchOption" id="wildcardOption" type="radio" checked="true" />
+            Wildcard
+         </label>
+         <label>
+            <input name="searchOption" id="regexpOption"type="radio" />
+            RegExp
+         </label>
       </div>
 
       <!-- find detector elements by eta-phi coordinate -->

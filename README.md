@@ -14,7 +14,7 @@
 > [TGC](http://atlas-proj-tgc.web.cern.ch/atlas-proj-tgc/doc/numbering.pdf)
 > RPC
 > CSC
-> MDT
+> [MDT](https://twiki.cern.ch/twiki/bin/viewauth/Atlas/DifferencesInMDTOnlineAndOffline)
 
 
 ## Log
@@ -25,20 +25,19 @@
 2. host @ cern
 3. Figure out MDT translation
 4. Implement CSC translation
-5. Online/offline toggle
-6. regex searching
 7. friendly helpful instructions
-8. "load all"
 9. persint
 
 #### Done
 1. Fixed PDF/image upload nonsense, added canvas layering
 2. Fixed jump when scaling axes
+3. Online/offline toggle, but doesn't do anything yet
+4. "load all"
+5. Search by wildcard (incl. exact results) or regexp
 
 #### Uploading to cern.ch
 laniu.web.cern.ch/laniu
-ssh laniu@lxplus.cern.ch ~/www
-
+laniu@lxplus.cern.ch ~/www
 
 
 ### U 2017-01-22
