@@ -90,10 +90,10 @@ Plot.prototype.drawAxes = function() {
    // Draw horizontal ticks
    if (this.axes[0].stepType == 'abs') {
       step = this.axes[0].step;
-      incr = Math.round(this.pixelsPerUnit[0] * step);
+      incr = (this.pixelsPerUnit[0] * step); ///
    } else if (this.axes[0].stepType == 'num') {
       step = this.range[0] / this.axes[0].step;
-      incr = Math.round(this.pixelsPerUnit[0] * step);
+      incr = (this.pixelsPerUnit[0] * step); ///
    }
 
    ticksPerLabel = Math.round(1.0 / step);
@@ -146,10 +146,10 @@ Plot.prototype.drawAxes = function() {
    // Draw vertical ticks
    if (this.axes[1].stepType == 'abs') {
       step = this.axes[1].step;
-      incr = Math.round(this.pixelsPerUnit[1] * step);
+      incr = (this.pixelsPerUnit[1] * step); ///
    } else if (this.axes[1].stepType == 'num') {
       step = this.range[1] / this.axes[1].step;
-      incr = Math.round(this.pixelsPerUnit[1] * step);
+      incr = (this.pixelsPerUnit[1] * step); ///
    }
 
    ticksPerLabel = Math.round(1.0 / step);
@@ -161,7 +161,7 @@ Plot.prototype.drawAxes = function() {
 
    // Your axes might land right on top of a tick mark. If so, skip it.
    if (this.center[1] / step == Math.floor(this.center[1] / step)) {
-      skip = Math.round(this.center[1] / step);
+      skip = this.center[1] / step; ///
    } else {
       skip = tick - 1;
    }
@@ -205,10 +205,10 @@ Plot.prototype.drawGrid = function() {
    // Draw horizontal ticks
    if (this.axes[0].stepType == 'abs') {
       step = this.axes[0].step;
-      incr = Math.round(this.pixelsPerUnit[0] * step);
+      incr = this.pixelsPerUnit[0] * step; ///
    } else if (this.axes[0].stepType == 'num') {
       step = this.range[0] / this.axes[0].step;
-      incr = Math.round(this.pixelsPerUnit[0] * step);
+      incr = this.pixelsPerUnit[0] * step; ///
    }
 
    ticksPerLabel = Math.round(1.0 / step);
@@ -245,10 +245,10 @@ Plot.prototype.drawGrid = function() {
    // Draw vertical ticks
    if (this.axes[1].stepType == 'abs') {
       step = this.axes[1].step;
-      incr = Math.round(this.pixelsPerUnit[1] * step);
+      incr = (this.pixelsPerUnit[1] * step); ///
    } else if (this.axes[1].stepType == 'num') {
       step = this.range[1] / this.axes[1].step;
-      incr = Math.round(this.pixelsPerUnit[1] * step);
+      incr = (this.pixelsPerUnit[1] * step); ///
    }
 
    ticksPerLabel = Math.round(1.0 / step);

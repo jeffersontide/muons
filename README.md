@@ -2,9 +2,19 @@
 
 ## Notes
 
-1. just running this out of box locally doesn't work for some reason, so launch server: python3 -m http.server
+1. launch server: python3 -m http.server
 
 2. OSX 10.10.5 / Chrome Version 55.0.2883.95 (64-bit)
+
+3. personal repo: https://github.com/jeffersontide/muons
+
+4. @cern: cern.ch/laniu --> https://laniu.web.cern.ch/laniu/
+
+5. naming conventions:
+> [TGC](http://atlas-proj-tgc.web.cern.ch/atlas-proj-tgc/doc/numbering.pdf)
+> RPC
+> CSC
+> MDT
 
 
 ## Log
@@ -12,7 +22,6 @@
 ### M 2017-01-23
 
 #### TODO
-1. Resizing axes has problems jumping, probably has to do with pixel roundoff in plot.js
 2. host @ cern
 3. Figure out MDT translation
 4. Implement CSC translation
@@ -20,9 +29,16 @@
 6. regex searching
 7. friendly helpful instructions
 8. "load all"
+9. persint
 
 #### Done
 1. Fixed PDF/image upload nonsense, added canvas layering
+2. Fixed jump when scaling axes
+
+#### Uploading to cern.ch
+laniu.web.cern.ch/laniu
+ssh laniu@lxplus.cern.ch ~/www
+
 
 
 ### U 2017-01-22
