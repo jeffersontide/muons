@@ -9,6 +9,22 @@
 
 ## Log
 
+### M 2017-01-23
+
+#### TODO
+1. Resizing axes has problems jumping, probably has to do with pixel roundoff in plot.js
+2. host @ cern
+3. Figure out MDT translation
+4. Implement CSC translation
+5. Online/offline toggle
+6. regex searching
+7. friendly helpful instructions
+8. "load all"
+
+#### Done
+1. Fixed PDF/image upload nonsense, added canvas layering
+
+
 ### U 2017-01-22
 
 #### oh no

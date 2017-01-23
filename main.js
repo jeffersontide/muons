@@ -349,22 +349,17 @@ function loadPlotImage() {
    // If no image was uploaded (the dialog was cancelled), don't do anything
    if (!this.value) { return; }
 
-   // Clear the background image/PDF
-   clearPlotImage();
+   // Clear the background PDF
    clearPlotPDF();
 
    // Create a filereader object
    var reader = new FileReader();
 
    // Set the filereader to update the background image in the plot (image)
-   // element as a dataURL
-   reader.onload = function(e) {
-      try {
-         document.getElementById("foo").src = e.target.result;
-      }
-      catch (err) {
-         console.log('error: ', err);
-      }
+   // element as a dataURL. This should drop any reference to the previous
+   // image.
+   reader.onloadend = function(e) {
+      document.getElementById("foo").src = reader.result;
    }
 
    reader.readAsDataURL(this.files[0]);
@@ -436,6 +431,8 @@ function clearPlotPDF() {
    var canvas = document.getElementById("imageCanvas");
    var context = canvas.getContext('2d');
    context.clearRect(0, 0, canvas.width, canvas.height);
+
+   document.getElementById("pdfInput").value = "";
 }
 
 
