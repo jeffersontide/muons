@@ -5,25 +5,21 @@
    <title>Muon Spectrometer Detector Elements</title>
 
    <!-- CSS stylesheet -->
-   <link rel="stylesheet" type="text/css" href="main.css">
+   <link rel="stylesheet" type="text/css" href="css/main.css">
 
    <!-- all Javascript functions -->
-   <script type="text/javascript" src="plot.js"></script>
-   <script type="text/javascript" src="detectors.js"></script>
-   <script type="text/javascript" src="pdf.js"></script>
-   <script type="text/javascript" src="main.js"></script>
+   <script type="text/javascript" src="js/plot.js"></script>
+   <script type="text/javascript" src="js/detectors.js"></script>
+   <script type="text/javascript" src="js/pdf.js"></script>
+   <script type="text/javascript" src="js/main.js"></script>
 </head>
 
 <body onload="init();" class="selectable">
-   <!-- ugh    <div class="c1">
-      <div class="c2">
-         <canvas id="pdfCanvas"></canvas>
-      </div>
-    </div> -->
-
-
    <!-- control stuff -->
    <div class="c1">
+      <div class="c2" id="instructions" style="padding:5px;">
+         friendly helpful instructions go here
+      </div>
       <!-- upload plot image -->
       <div class="c2">
          <input type="file" id="imgInput" accept="image/*" data-type="image" />
@@ -54,10 +50,16 @@
                <td id="detectorButtons">
                   <!-- buttons added dynamically -->
                </td>
-            <tr>
             </tr>
+            <tr>
                <td>
-                  Convention:
+                  <button id="selectAll">Select All</button>
+                  <button id="clr">Clear</button>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  Naming Convention:
                   <label>
                      <input type="radio" name="convention" id="onlineConvention" />
                      Online
@@ -66,8 +68,7 @@
                      <input type="radio" name="convention" id="offlineConvention"checked="true" />
                      Offline
                   </label>
-                  <button id="loadAll">Load All</button>
-                  <button id="clr">Clear</button>
+                  &nbsp;&nbsp;&nbsp;<a href="conventions.md">(?)</a>
                </td>
             </tr>
          </table>
@@ -81,12 +82,13 @@
          <br />
          <label>
             <input name="searchOption" id="wildcardOption" type="radio" checked="true" />
-            Wildcard
+            Exact/Wildcard
          </label>
          <label>
             <input name="searchOption" id="regexpOption"type="radio" />
             RegExp
          </label>
+         &nbsp;&nbsp;&nbsp;(both are case-insensitive)
       </div>
 
       <!-- find detector elements by eta-phi coordinate -->

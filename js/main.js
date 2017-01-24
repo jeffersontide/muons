@@ -18,6 +18,7 @@ function init() {
       }
    }
 
+   document.getElementById("selectAll").onclick = selectAll;
    document.getElementById("clr").onclick = clearDetectors;
 
    document.getElementById("clearPlotImage").onclick = clearPlotImage;
@@ -484,12 +485,14 @@ function conventionCallback() {
    }
 }
 
-// Load all detectors
-function loadAll() {
-   var detectors = Object.keys(window.detectors);
-   for (var i = 0; i < detectors.length; i++) {
-      if (!detectors[i].loaded) {
-         loadDetectorData(detectors[i].id);
+// Select all detectors
+function selectAll() {
+   // too paranoid to use for..in, sorry
+   var detectorList = Object.keys(window.detectors);
+   for (var i = 0; i < detectorList.length; i++) {
+      var detector = window.detectors[detectorList[i]];
+      if (!detector.selected) {
+         detector.button.click();
       }
    }
 }
@@ -600,8 +603,6 @@ function wildcardToRegexStr(wildStr) {
       reStr += ".*";
    }
 
-   console.log(wild);
-
    // Doesn't end with an asterisk
    if (wild.length > 0 && wild[wild.length - 1] != "") {
       // Delete the last wildcard
@@ -701,12 +702,15 @@ function updateDetectors() {
       hoverElement.appendChild(element);
    }
 
-   // Deal with hold stations
-   var holdStationList = window.holdList;
+   // Deal with hold stations -- first, remove duplicates
+   var holdStationList = window.holdList.reduce(
+      function(a, b) {
+         if (a.indexOf(b) < 0) { a.push(b) };
+         return a;
+      },
+      []
+   );
    var holdElement = document.getElementById("holdStations");
-
-   // Check for duplicates! Can be very confusing boo
-   // ...
 
    // Clear list
    while (holdElement.firstChild) {
