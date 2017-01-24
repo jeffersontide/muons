@@ -22,7 +22,6 @@
 ### M 2017-01-23
 
 #### TODO
-2. host @ cern
 3. Figure out MDT translation
 4. Implement CSC translation
 7. friendly helpful instructions
@@ -34,6 +33,7 @@
 3. Online/offline toggle, but doesn't do anything yet
 4. "load all"
 5. Search by wildcard (incl. exact results) or regexp
+6. put on cern @ cern.ch/laniu
 
 #### Uploading to cern.ch
 laniu.web.cern.ch/laniu
@@ -59,24 +59,7 @@ laniu@lxplus.cern.ch ~/www
 3. Locate element with regexp
 4. friendly helpful instructions
 5. Page w/ naming convention explanation & search suggestions
-6. implement:
-> Have drop-down menus, so that the user doesnt need to type anything. For example:
-> 
-> [ MDT ]
-> CSC
-> RPC
-> TGC
-> 
-> ... user chooses CSC, for example ...
-> 
-> [ cscCSL1A01 ]
-> cscCSL1A03
-> cscCSL1A05
-> cscCSL1A07
-> etc
-7. Implement:
-> Could the Locate Element feature allow for multiple locates simultaneously, using wildcards? Like, if the user entered *CSL*, all the CSL chambers would be highlighted?
-8. label 'eta' & 'phi'
+6. label 'eta' & 'phi'
 
 
 ### F 2017-01-20
@@ -122,3 +105,27 @@ laniu@lxplus.cern.ch ~/www
 #### Done
 1. Moved all CSS/javascript to separate files, got rid of jquery
 2. Need relative pixel translation of eta-phi
+
+
+### Previously
+
+#### Sara's notes
+
+(original repo @ https://github.com/sarafs1926/muons)
+
+0) Welcome to the rough draft of the MS display webpage (muons.web.cern.ch)! In this directory you will find the source code which details how I put together the rough draft, from start to finish. In each directory 
+
+1.parsing_ms_xml
+2.Ntuple_to_hist
+3.hist_to_coords
+
+there is a README file which explains the purpose of each of the blocks of code. Below I explain an overall summary of what I did, and the website's current functionality.
+
+The feedback.txt file is a file of ideas collected by Alex Tuna when he showed the site to people at CERN, on how to improve the webpage. At the bottom of the file, I wrote a few comments on this feedback.
+
+1) Ran Jochen Meyer's DQ ParticleGun code with ATLAS 20.7.6.4 on lxplus. Fired 120,000 Geantinos (virtual particles for simulation which do not interact with materials and undertake transportation processes only) straight through the 3/2015 simulated ATLAS detector, generated a .root ntuple with the hit positions (local/global), identifiers (sim/offline) and more.
+
+(show example histogram vs. approximated detector element screenshot)
+2)For each simulation stationname, generated an eta-phi plot of all corresponding ntuple hits. This is a fairly good approximation of the location of each detector element in the muon spectrometer (over 10,000 in total). Approximated  the contents of each plot as a rectangle (was conservative in this approximation) and converted eta phi coordinates to pixels.
+
+3)read in all the elements and their stationnames with Javascript/jQuery, color coded them by/within their chambers, and animated them with jQuery eventhandlers so the user can choose which chamber(s) (s)he'd like to see and and mouse over those detector elements. User can also choose to view MDT offline and online stationname conventions. Users can also superimpose their own plots onto the canvas to review areas where they suspect a malfunctioning detector element and search for individual detector elements to view on the grid.

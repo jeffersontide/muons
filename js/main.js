@@ -553,9 +553,9 @@ function locateElement() {
    var re;
 
    if (document.getElementById("regexpOption").checked) {
-      re = new RegExp(str);
+      re = new RegExp(str, 'i');
    } else {
-      re = wildcardToRegex(str);
+      re = new RegExp(wildcardToRegexStr(str), 'i');
    }
 
    // Loop through all selected detectors
@@ -583,7 +583,7 @@ function locateElement() {
    updateDetectors();
 }
 
-function wildcardToRegex(wildStr) {
+function wildcardToRegexStr(wildStr) {
    var wild = wildStr.split("*");
    var reStr = "";
 
@@ -610,10 +610,7 @@ function wildcardToRegex(wildStr) {
       reStr += "$";
    }
 
-   // I forget how Javascript handles this
-   var re = new RegExp(reStr);
-
-   return re;
+   return reStr;
 }
 
 function locateElementsByCoord() {
