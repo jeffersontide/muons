@@ -22,6 +22,7 @@
 ### M 2017-01-23
 
 #### TODO
+1. color map
 3. Figure out MDT translation
 4. Implement CSC translation
 7. friendly helpful instructions
@@ -216,3 +217,34 @@ The feedback.txt file is a file of ideas collected by Alex Tuna when he showed t
 2)For each simulation stationname, generated an eta-phi plot of all corresponding ntuple hits. This is a fairly good approximation of the location of each detector element in the muon spectrometer (over 10,000 in total). Approximated  the contents of each plot as a rectangle (was conservative in this approximation) and converted eta phi coordinates to pixels.
 
 3)read in all the elements and their stationnames with Javascript/jQuery, color coded them by/within their chambers, and animated them with jQuery eventhandlers so the user can choose which chamber(s) (s)he'd like to see and and mouse over those detector elements. User can also choose to view MDT offline and online stationname conventions. Users can also superimpose their own plots onto the canvas to review areas where they suspect a malfunctioning detector element and search for individual detector elements to view on the grid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
