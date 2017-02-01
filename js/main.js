@@ -33,7 +33,7 @@ function init() {
    document.getElementById("locateCoord").onclick = locateElementsByCoord;
 
    // Set up plot
-   window.etaAxis = new Axis('eta', -2.6, 2.6, 0.5, 'abs', '#000000', 'linear');
+   window.etaAxis = new Axis('eta', -3.2, 3.2, 0.5, 'abs', '#000000', 'linear');
    window.phiAxis = new Axis('phi', -3.2, 3.2, 0.5, 'abs', '#000000', 'linear');
    window.plot = new Plot("plotCanvas", "coordCanvas",
                           [window.etaAxis, window.phiAxis], "eta-phi", false,
@@ -68,6 +68,26 @@ function init() {
    // Set up canvases
    resizeCanvas(600, 400);
    document.getElementById("map").style.cursor = 'crosshair';
+}
+
+
+function testTranslation() {
+   selectAll();
+
+   setTimeout( function() {
+      var detectorList = Object.keys(window.detectors); // 'mdt', etc.
+      for (var i = 0; i < detectorList.length; i++) {
+         var detector = window.detectors[detectorList[i]];
+         var stationList = Object.keys(detector.stations);
+         for (var j = 0; j < stationList.length; j++) {
+            var station = detector.stations[stationList[j]];
+            console.log(station.id, station.generateOnlineID());
+         }
+      }
+      clearDetectors();
+
+              console.log('done.');
+   }, 1000);
 }
 
 
@@ -483,6 +503,8 @@ function conventionCallback() {
    if (this.checked) {
       window.convention = this.id;
    }
+
+   updateDetectors();
 }
 
 // Select all detectors
@@ -698,7 +720,7 @@ function updateDetectors() {
       // Display hover stations in list
       var element = document.createElement('span');
       element.style.borderColor = hoverStationList[i].detectorType.color;
-      element.innerHTML = hoverStationList[i].id;
+      element.innerHTML = (window.convention == "offlineConvention") ? hoverStationList[i].id : hoverStationList[i].generateOnlineID();
       hoverElement.appendChild(element);
    }
 
@@ -725,7 +747,7 @@ function updateDetectors() {
       var element = document.createElement('span');
       element.style.borderColor = holdStationList[i].detectorType.color;
       element.id = holdStationList[i].id;
-      element.innerHTML = element.id;
+      element.innerHTML = (window.convention == "offlineConvention") ? holdStationList[i].id : holdStationList[i].generateOnlineID();
       element.onmousedown = function() { window.update = false; };
       element.onmouseup = function() { window.update = true; };
       element.onmouseover = identifyStation;

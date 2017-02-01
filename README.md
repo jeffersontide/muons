@@ -14,19 +14,38 @@
 
 ## Log
 
-### Matters of taste
-1. stick to your scope
-2. for..in paranoia
-3. be consistent with your naming
+### T 2017-01-31
+- no more major features, but eventually:
+   . resizeable canvas
+   . manipulable image
+
+#### oh no
+. some boxes are sticky (in the plot and hold list) when confused by mouse events
+. ??? csc names are already in online convention
+. some of the mdt boxes as given (online at least) have zero-area boxes
+
+#### TODO
+. something css to indicate how plot settings work
+. instructions (double click to remove held stations, plot settings, etc.)
+. final sweep of detector locations (persint, etc.)
+. offline -> online naming function
+. add to instructions: double click to remove held station
+. what are the boxes actually called -- can i call them stations
+. label your axes, etc.
+. fuck, rpc is still broken and i forgot
+
+#### done
+. fixed coordinate problem for axes not set at (0, 0)
+
 
 ### M 2017-01-23
 
 #### TODO
 1. color map
-3. Figure out MDT translation
-4. Implement CSC translation
-7. friendly helpful instructions
-9. persint
+2. Figure out MDT translation
+3. Implement CSC translation
+4. friendly helpful instructions
+5. persint
 
 #### Done
 1. Fixed PDF/image upload nonsense, added canvas layering

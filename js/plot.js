@@ -341,7 +341,7 @@ Plot.prototype.identifyRect = function(coordArray, color, thickness) {
       y2 += 2;
    } else {
       // Something is wrong
-      console.log('fuck');
+      console.log('bad coords:', x1, y1, x2, y2);
    }
 
    context.rect(x1, this.canvas.height - y1, x2 - x1, -(y2 - y1));

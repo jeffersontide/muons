@@ -66,6 +66,25 @@ def offlineToOnline(id, detectorType, inputType):
       # offline:     (XXX)F(phi)Z(eta)
       return
 
+   if detectorType == "rpc":
+      # online taken from persint, but can't find the table this time ???
+      #
+      # web:      (XXX)(|eta|)(A/B/C)(0 phi)
+      # online:   (XXX)(|eta|)(A/B/C)(phi *2 -(odd))
+      # offline:  (XXX)F(phi)Z(+-eta)
+      #
+      # phi default (1..8)
+      #
+      # XXX:      phi:        eta range:
+      # BML*                  +-7
+      # BMS       -6,-7       +-6
+      # BMF       6,7         +-3
+      # BOL*                  +-6
+      # BOS       -6,-7       +-6
+      # BOF       6,7         +-4           |eta| -> *2 -1
+      # BOG       6,7         +-4           |eta| -> *2, includes 0B
+      return
+
    if detectorType == "tgc":
       # Online convention taken from http://atlas-proj-tgc.web.cern.ch/atlas-proj-tgc/doc/numbering.pdf and Masato's email
       #
@@ -121,25 +140,6 @@ def offlineToOnline(id, detectorType, inputType):
       #           E: phi(1,3,...,15) subphi(0..2 except 7(1,2) and 11(0,1) and 15(1,2),
       #                                      which makes sense in the picture)
       #           F: phi(1..24)
-      return
-
-   if detectorType == "rpc":
-      # online taken from persint, but can't find the table this time ???
-      #
-      # web:      (XXX)(|eta|)(A/B/C)(0 phi)
-      # online:   (XXX)(|eta|)(A/B/C)(phi *2 -(odd))
-      # offline:  (XXX)F(phi)Z(+-eta)
-      #
-      # phi default (1..8)
-      #
-      # XXX:      phi:        eta range:     phi odd?
-      # BML                   +-7            Y
-      # BMS       -6,-7       +-6            N
-      # BMF       6,7         +-3            N
-      # BOL                   +-6            Y
-      # BOS       -6,-7       +-6            N
-      # BOF       6,7         +-4            N          |eta| -> *2 -1
-      # BOG       6,7         +-4            N          |eta| -> *2, includes 0B
       return
 
 
