@@ -33,11 +33,11 @@ function init() {
    document.getElementById("locateCoord").onclick = locateElementsByCoord;
 
    // Set up plot
-   window.etaAxis = new Axis('eta', -3.2, 3.2, 0.5, 'abs', '#000000', 'linear');
-   window.phiAxis = new Axis('phi', -3.2, 3.2, 0.5, 'abs', '#000000', 'linear');
+   window.etaAxis = new Axis('eta', -3.6, 3.6, 0.5, 'abs', '#000000', 'linear');
+   window.phiAxis = new Axis('phi', -3.6, 3.6, 0.5, 'abs', '#000000', 'linear');
    window.plot = new Plot("plotCanvas", "coordCanvas",
                           [window.etaAxis, window.phiAxis], "eta-phi", false,
-                          [0, 0]);
+                          [-3,-3]);
 
    // Set up plot manipulation
    document.getElementById("setOrigin").onclick = setOriginCallback;
