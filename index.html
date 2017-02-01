@@ -17,30 +17,22 @@
 <body onload="init();" class="selectable">
    <!-- control stuff -->
    <div class="c1">
+
+      <!-- instructions -->
       <div class="c2" id="instructions" style="padding:5px;">
-         Select a detector type (e.g., TGC) and <br/>hover over the eta-phi plot to view detector locations
-      </div>
-      <!-- upload plot image -->
-      <div class="c2">
-         <input type="file" id="imgInput" accept="image/*" data-type="image" />
-         <button id="clearPlotImage">Clear Image</button>
-      </div>
+         unhelpful notes:<br/><br/>
 
-      <!-- upload plot from pdf -->
-      <div class="c2">
-         <input type="file" id="pdfInput" accept="application/pdf" />
-         Page: <input id="pageNumber" style="width:50px;" value=1></input>
-         <button id="clearPlotPDF">Clear PDF</button>
-      </div>
+         select desired detector type(s) (e.g., TGC) and<br/>
+         hover over the eta-phi plot to view detector locations<br /><br/>
 
-      <!-- manipulate plot axes -->
-      <div class="c2">
-         <input id="originX" style="width:50px" value="-3"></input>
-         <input id="originY" style="width:50px" value="-3"></input>
+         "hold" stations by clicking on the plot<br/><br/>
 
-         <button id="setOrigin">Set Point</button>
-         <button id="scaleX">Scale X-Axis</button>
-         <button id="scaleY">Scale Y-Axis</button>
+         hover over a station name in the hold list to see<br/>
+         it highlighted on the plot<br/><br/>
+
+         double-click on a station in the hold list to remove it<br/><br/>
+
+         you'll figure it out eventually
       </div>
 
       <!-- detector type selection -->
@@ -72,6 +64,24 @@
          </table>
       </div>
 
+      <!-- display mouse coordinates -->
+      <div class="c2" id="mousePos"></div>
+
+      <!-- display selected stations -->
+      <div class="c2" style="display:inline-block;">
+         <div style="width:200px; height:200px; float:left; overflow:auto;" id="hoverStations" class="unselectable">
+            <!-- stations will be listed here when hovered over -->
+         </div>
+
+         <div style="width:200px; height:200px; float:left; overflow:auto;" id="holdStations" class="unselectable">
+            <!-- stations will be listed here when held -->
+         </div>
+
+         <br />
+         <button id="copyStations">Copy Stations</button>
+         <button id="clearHold">Clear Holds</button>
+      </div>
+
       <!-- find detector element by ID -->
       <div class="c2" id="findElementContainer">
          &nbsp;Locate element by ID:&nbsp;
@@ -96,23 +106,30 @@
          <button id="locateCoord">Locate</button>
       </div>
 
-      <!-- display mouse coordinates -->
-      <div class="c2" id="mousePos"></div>
 
-      <!-- display selected stations -->
-      <div class="c2" style="display:inline-block;">
-         <div style="width:200px; height:200px; float:left; overflow:auto;" id="hoverStations" class="unselectable">
-            <!-- stations will be listed here when hovered over -->
-         </div>
-
-         <div style="width:200px; height:200px; float:left; overflow:auto;" id="holdStations" class="unselectable">
-            <!-- stations will be listed here when held -->
-         </div>
-
-         <br />
-         <button id="copyStations">Copy Stations</button>
-         <button id="clearHold">Clear Holds</button>
+      <!-- upload plot image -->
+      <div class="c2">
+         <input type="file" id="imgInput" accept="image/*" data-type="image" />
+         <button id="clearPlotImage">Clear Image</button>
       </div>
+
+      <!-- upload plot from pdf -->
+      <div class="c2">
+         <input type="file" id="pdfInput" accept="application/pdf" />
+         Page: <input id="pageNumber" style="width:50px;" value=1></input>
+         <button id="clearPlotPDF">Clear PDF</button>
+      </div>
+
+      <!-- manipulate plot axes -->
+      <div class="c2">
+         <input id="originX" style="width:50px" value="-3"></input>
+         <input id="originY" style="width:50px" value="-3"></input>
+
+         <button id="setOrigin">Set Point</button>
+         <button id="scaleX">Scale X-Axis</button>
+         <button id="scaleY">Scale Y-Axis</button>
+      </div>
+
    </div>
 
    <!-- map that stores all detector elements -->

@@ -23,19 +23,18 @@
 . some boxes are sticky (in the plot and hold list) when confused by mouse events
 . ??? csc names are already in online convention
 . some of the mdt boxes as given (online at least) have zero-area boxes
+. cannot "locate element by ID" with online convention names
+. fuck, rpc is still broken and i forgot
 
 #### TODO
 . something css to indicate how plot settings work
-. instructions (double click to remove held stations, plot settings, etc.)
-. final sweep of detector locations (persint, etc.)
-. offline -> online naming function
-. add to instructions: double click to remove held station
 . what are the boxes actually called -- can i call them stations
 . label your axes, etc.
-. fuck, rpc is still broken and i forgot
+. remove all your swearing at console.log
 
 #### done
 . fixed coordinate problem for axes not set at (0, 0)
+. offline --> online translation should work now, except for the caveats above
 
 
 ### M 2017-01-23
