@@ -18,6 +18,7 @@ function Plot(canvasID, coordCanvas, axes, title, grid, center) {
    this.context = this.canvas.getContext('2d');
    this.coordContext = this.coordCanvas.getContext('2d');
    this.axes = axes;       // array of 2 Axis objects, ordered
+   this.showAxes = true;
    this.title = title;
    this.grid = grid;       // Boolean
    this.tickSize = 10;
@@ -57,7 +58,9 @@ Plot.prototype.update = function() {
    }
 
    // Draw axes
-   this.drawAxes();
+   if (this.showAxes) {
+      this.drawAxes();
+   }
 }
 
 Plot.prototype.setOrigin = function(x, y) {

@@ -32,6 +32,8 @@ function init() {
    document.getElementById("locate").onclick = locateElement;
    document.getElementById("locateCoord").onclick = locateElementsByCoord;
 
+   document.getElementById("toggleAxes").onclick = toggleAxes;
+
    // Set up plot
    window.etaAxis = new Axis('eta', -3.6, 3.6, 0.5, 'abs', '#000000', 'linear');
    window.phiAxis = new Axis('phi', -3.6, 3.6, 0.5, 'abs', '#000000', 'linear');
@@ -94,6 +96,12 @@ function testTranslation() {
 // ================= //
 // Plot manipulation //
 // ================= //
+
+function toggleAxes() {
+   window.plot.showAxes = window.plot.showAxes ? false : true;
+   window.plot.update();
+   updateDetectors();
+}
 
 function resizeCanvas(width, height) {
    var width = width.toString();
@@ -640,7 +648,7 @@ function locateElementsByCoord() {
    x = parseFloat(document.getElementById("etaCoord").value);
    y = parseFloat(document.getElementById("phiCoord").value);
 
-   holdStations(x, y);
+   holdStationsAt(x, y);
 
    updateDetectors();
 }
@@ -724,15 +732,14 @@ function updateDetectors() {
       hoverElement.appendChild(element);
    }
 
-   // Deal with hold stations -- first, remove duplicates
-   var holdStationList = window.holdList.reduce(
-      function(a, b) {
-         if (a.indexOf(b) < 0) { a.push(b) };
-         return a;
-      },
-      []
-   );
+   // Hold stations
+   var holdStationList = window.holdList;
    var holdElement = document.getElementById("holdStations");
+
+   // Remove coords if none are needed
+   if (holdStationList.length == 0) {
+      document.getElementById("holdCoords").innerHTML = "";
+   }
 
    // Clear list
    while (holdElement.firstChild) {
@@ -752,7 +759,7 @@ function updateDetectors() {
       element.onmouseup = function() { window.update = true; };
       element.onmouseover = identifyStation;
       element.onmouseout = updateDetectors;
-      element.ondblclick = unholdStation;
+      element.ondblclick = unholdStationFromElement;
       holdElement.appendChild(element);
    }
 }
@@ -805,13 +812,54 @@ function identifyStation() {
    console.log('well crap')
 }
 
-function holdStations(x, y) {
+function holdStation(station) {
+   station.hold = true;
+   window.holdList.push(station);
+
+   updateDetectors();
+}
+
+function unholdStationFromElement() {
+   // ugh dumb
+   for (var i = 0; i < window.holdList.length; i++) {
+      if (window.holdList[i].id == this.id) {
+         unholdStation(window.holdList[i]);
+      }
+   }
+}
+
+function unholdStation(station) {
+   // Find the station in the hold list, then remove it
+   for (var i = 0; i < window.holdList.length; i++) {
+      if (window.holdList[i].id == station.id) {
+         // Unhold the station
+         window.holdList[i].hold = false;
+
+         // Remove it from the list
+         window.holdList.splice(i, 1);
+         break;
+      }
+   }
+
+   updateDetectors();
+}
+
+function holdStationsAt(x, y) {
    var stations = findStations(x, y);
 
+   // Clear hold list
+   unholdStations();
+
+   // Repopulate hold list
    for (var i = 0; i < stations.length; i++) {
-      stations[i].hold = true;
-      window.holdList.push(stations[i]);
+      holdStation(stations[i]);
    }
+
+   // Update coords
+   var holdCoords = document.getElementById("holdCoords");
+   holdCoords.innerHTML = x.toFixed(3).toString() + "  " + y.toFixed(3).toString();
+
+   updateDetectors();
 }
 
 function unholdStations() {
@@ -820,26 +868,6 @@ function unholdStations() {
    }
 
    window.holdList = [];
-
-   updateDetectors();
-}
-
-function unholdStation() {
-   // 'this' refers to the text element in the list
-   var stationID = this.id;
-
-   // Find the station in the hold list, then remove it
-   for (var i = 0; i < window.holdList.length; i++) {
-      if (window.holdList[i].id == stationID) {
-         // Unhold the station and remove it from the global list
-         window.holdList[i].hold = false;
-         window.holdList.splice(i, 1);
-         break;
-      }
-   }
-
-   // Delete the text element from the list
-   this.remove();
 
    updateDetectors();
 }
@@ -881,21 +909,15 @@ function mousemoveCallback(e) {
    window.mouse.y = (window.mouse.pixely - window.plot.originPixel[1]) /
       window.plot.pixelsPerUnit[1];
 
-   // display relative mouse coords
-   /*
-   var mouseStr = " mouse: " + window.mouse.pixelx.toString() + "  " +
-      window.mouse.pixely.toString() + "<br/>";
-   */ var mouseStr = "";
-
-   var coordStr = "&nbsp;coords: " + window.mouse.x.toFixed(3).toString() + "  " +
+   var coordStr = "&nbsp;mouse coords: " + window.mouse.x.toFixed(3).toString() + "  " +
       window.mouse.y.toFixed(3).toString();
-   document.getElementById("mousePos").innerHTML = mouseStr + coordStr;
+   document.getElementById("mousePos").innerHTML = coordStr;
 
    updateDetectors();
 }
 
 function clickCallback(e) {
-   holdStations(window.mouse.x, window.mouse.y);
+   holdStationsAt(window.mouse.x, window.mouse.y);
 
    updateDetectors();
 }

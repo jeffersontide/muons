@@ -6,7 +6,7 @@ function Detectors() {
    this.addDetector('tgc', 'TGC', '#ff9966', 'ms_single/tgccoords.txt');
    this.addDetector('rpc', 'RPC', '#cc00cc', 'ms_single/rpccoords.txt');
    this.addDetector('csc', 'CSC', '#00ff00', 'ms_single/csccoords.txt');
-   this.addDetector('mdt', 'MDT', '#ffff4d', 'ms_single/mdtoffcoords.txt');
+   this.addDetector('mdt', 'MDT', '#8888ff', 'ms_single/mdtoffcoords.txt');
 }
 
 Detectors.prototype.addDetector = function(id, name, color, path) {

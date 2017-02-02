@@ -16,21 +16,29 @@
 
 <body onload="init();" class="selectable">
    <!-- control stuff -->
-   <div class="c1">
+   <div class="c1" style="width:440px;">
 
       <!-- instructions -->
-      <div class="c2" id="instructions" style="padding:5px;">
-         select desired detector type(s) (e.g., TGC) and<br/>
-         hover over the eta-phi plot to view detector locations<br /><br/>
+      <div class="c2" id="instructions" style="padding:5px; font-size:14px;">
+         <details open>
+            <summary>Instructions (click to open/close)</summary>
+            <ul>
+               <li>Select an eta-phi plot as background (image or PDF)</li>
+               <li>Adjust the plot settings to match the coordinates to the image</li>
+               <ul>
+                  <li>Enter coordinates for the axes (below the plot)</li>
+                  <li>Click 'Set Point', then click (and drag) to set axes' location. Click anywhere outside the plot when done.</li>
+                  <li>Click 'Scale Axis', then click and drag on the plot to scale the axis. Click anywhere outside the plot when done.</li>
+               </ul>
+               <li>Select desired detector type(s) (e.g., TGC) and hover over the plot to view detector locations</li>
+               <li>Click on the plot to "hold" current detector elements and coordinates</li>
+               <li>Hover over a station name in the list to see it highlighted on the plot</li>
+               <li>Double-click on a station name in the list to remove it</li>
+            </ul>
 
-         "hold" stations by clicking on the plot<br/><br/>
+         contact: laniu (at) cern.ch
+         </details>
 
-         hover over a station name in the hold list to see<br/>
-         it highlighted on the plot<br/><br/>
-
-         double-click on a station in the hold list to remove it<br/><br/>
-
-         you'll figure it out eventually
       </div>
 
       <!-- detector type selection -->
@@ -47,7 +55,7 @@
             </tr>
             <tr>
                <td>
-                  Naming Convention:
+                  Naming convention:
                   <label>
                      <input type="radio" name="convention" id="onlineConvention" />
                      Online
@@ -61,9 +69,6 @@
          </table>
       </div>
 
-      <!-- display mouse coordinates -->
-      <div class="c2" id="mousePos"></div>
-
       <!-- display selected stations -->
       <div class="c2" style="display:inline-block;">
          <div style="width:200px; height:200px; float:left; overflow:auto;" id="holdStations" class="unselectable">
@@ -74,6 +79,8 @@
             <!-- stations will be listed here when hovered over -->
          </div>
 
+         <br />
+         &nbsp;&nbsp;coords:&nbsp;<span style="all:initial;" id="holdCoords"></span>
          <br />
          <button id="copyStations">Copy Stations</button>
          <button id="clearHold">Clear Holds</button>
@@ -102,7 +109,6 @@
          <input id="etaCoord" value="0" style="width:50px;" /> <input id="phiCoord"  style="width:50px;" value="0" />
          <button id="locateCoord">Locate</button>
       </div>
-
    </div>
 
    <!-- map that stores all detector elements -->
@@ -115,6 +121,9 @@
          <canvas id="plotCanvas"></canvas>
       </div>
 
+      <!-- display mouse coordinates -->
+      <div class="c2" id="mousePos" style="padding:5px;"></div>
+
       <!-- manipulate plot axes -->
       <div class="c2">
          <input id="originX" style="width:50px" value="-3"></input>
@@ -123,19 +132,25 @@
          <button id="setOrigin">Set Point</button>
          <button id="scaleX">Scale X-Axis</button>
          <button id="scaleY">Scale Y-Axis</button>
+         <button id="toggleAxes">Toggle Axes</button>
       </div>
 
-      <!-- upload plot image -->
       <div class="c2">
-         <input type="file" id="imgInput" accept="image/*" data-type="image" />
-         <button id="clearPlotImage">Clear Image</button>
-      </div>
-
-      <!-- upload plot from pdf -->
-      <div class="c2">
-         <input type="file" id="pdfInput" accept="application/pdf" />
-         Page: <input id="pageNumber" style="width:50px;" value=1></input>
-         <button id="clearPlotPDF">Clear PDF</button>
+         <table>
+            <tr>
+               <!-- upload plot image -->
+               <td>&nbsp;&nbsp;Set background image:</td>
+               <td><input type="file" id="imgInput" accept="image/*" data-type="image" /></td>
+               <td></td>
+               <td><button id="clearPlotImage">Clear Image</button></td>
+            </tr>
+            <tr>
+               <!-- upload plot from pdf -->
+               <td>&nbsp;&nbsp;Set background PDF:</td>
+               <td><input type="file" id="pdfInput" accept="application/pdf" /></td>
+               <td>Page: <input id="pageNumber" style="width:50px;" value=1></input></td>
+               <td><button id="clearPlotPDF">Clear PDF</button></td>
+         </table>
       </div>
    </div>
 </body>

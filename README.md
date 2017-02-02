@@ -10,13 +10,28 @@
 
 4. @cern: cern.ch/laniu --> https://laniu.web.cern.ch/laniu/
 
+## Acknowledgments
+. PDF.js
+. Persint people
+. AT & SS
+
 ---
 
 ## Log
 
 ### W 2017-02-01
+
+#### done
 . rpc lives again
 . less stupid layout
+. include eta/phi coords when holding
+. better instructions + contact info
+
+#### TODO
+. online search
+. csv to copy names
+. capitalize detector names
+. drop down geometry menu
 
 
 ### T 2017-01-31
