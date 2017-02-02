@@ -14,6 +14,11 @@
 
 ## Log
 
+### W 2017-02-01
+. rpc lives again
+. less stupid layout
+
+
 ### T 2017-01-31
 - no more major features, but eventually:
    . resizeable canvas

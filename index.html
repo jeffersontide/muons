@@ -20,8 +20,6 @@
 
       <!-- instructions -->
       <div class="c2" id="instructions" style="padding:5px;">
-         unhelpful notes:<br/><br/>
-
          select desired detector type(s) (e.g., TGC) and<br/>
          hover over the eta-phi plot to view detector locations<br /><br/>
 
@@ -58,7 +56,6 @@
                      <input type="radio" name="convention" id="offlineConvention"checked="true" />
                      Offline
                   </label>
-                  &nbsp;&nbsp;&nbsp;<a href="conventions.md">(?)</a>
                </td>
             </tr>
          </table>
@@ -69,12 +66,12 @@
 
       <!-- display selected stations -->
       <div class="c2" style="display:inline-block;">
-         <div style="width:200px; height:200px; float:left; overflow:auto;" id="hoverStations" class="unselectable">
-            <!-- stations will be listed here when hovered over -->
-         </div>
-
          <div style="width:200px; height:200px; float:left; overflow:auto;" id="holdStations" class="unselectable">
             <!-- stations will be listed here when held -->
+         </div>
+
+         <div style="width:200px; height:200px; float:left; overflow:auto;" id="hoverStations" class="unselectable">
+            <!-- stations will be listed here when hovered over -->
          </div>
 
          <br />
@@ -106,18 +103,16 @@
          <button id="locateCoord">Locate</button>
       </div>
 
+   </div>
 
-      <!-- upload plot image -->
-      <div class="c2">
-         <input type="file" id="imgInput" accept="image/*" data-type="image" />
-         <button id="clearPlotImage">Clear Image</button>
-      </div>
-
-      <!-- upload plot from pdf -->
-      <div class="c2">
-         <input type="file" id="pdfInput" accept="application/pdf" />
-         Page: <input id="pageNumber" style="width:50px;" value=1></input>
-         <button id="clearPlotPDF">Clear PDF</button>
+   <!-- map that stores all detector elements -->
+   <div class="c1" id="mapContainer">
+      <div id="map" class="c2">
+         <!-- src="ms_single/plotAxes.png" -->
+         <img id="foo" />
+         <canvas id="imageCanvas"></canvas>
+         <canvas id="coordCanvas"></canvas>
+         <canvas id="plotCanvas"></canvas>
       </div>
 
       <!-- manipulate plot axes -->
@@ -130,16 +125,17 @@
          <button id="scaleY">Scale Y-Axis</button>
       </div>
 
-   </div>
+      <!-- upload plot image -->
+      <div class="c2">
+         <input type="file" id="imgInput" accept="image/*" data-type="image" />
+         <button id="clearPlotImage">Clear Image</button>
+      </div>
 
-   <!-- map that stores all detector elements -->
-   <div class="c1" id="mapContainer">
-      <div id="map" class="c2">
-         <!-- src="ms_single/plotAxes.png" -->
-         <img id="foo" />
-         <canvas id="imageCanvas"></canvas>
-         <canvas id="coordCanvas"></canvas>
-         <canvas id="plotCanvas"></canvas>
+      <!-- upload plot from pdf -->
+      <div class="c2">
+         <input type="file" id="pdfInput" accept="application/pdf" />
+         Page: <input id="pageNumber" style="width:50px;" value=1></input>
+         <button id="clearPlotPDF">Clear PDF</button>
       </div>
    </div>
 </body>

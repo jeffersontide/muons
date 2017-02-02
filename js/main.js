@@ -81,7 +81,7 @@ function testTranslation() {
          var stationList = Object.keys(detector.stations);
          for (var j = 0; j < stationList.length; j++) {
             var station = detector.stations[stationList[j]];
-            console.log(station.id, station.generateOnlineID());
+            console.log(station.id, station.onlineID());
          }
       }
       clearDetectors();
@@ -720,7 +720,7 @@ function updateDetectors() {
       // Display hover stations in list
       var element = document.createElement('span');
       element.style.borderColor = hoverStationList[i].detectorType.color;
-      element.innerHTML = (window.convention == "offlineConvention") ? hoverStationList[i].id : hoverStationList[i].generateOnlineID();
+      element.innerHTML = (window.convention == "offlineConvention") ? hoverStationList[i].id : hoverStationList[i].onlineID();
       hoverElement.appendChild(element);
    }
 
@@ -747,7 +747,7 @@ function updateDetectors() {
       var element = document.createElement('span');
       element.style.borderColor = holdStationList[i].detectorType.color;
       element.id = holdStationList[i].id;
-      element.innerHTML = (window.convention == "offlineConvention") ? holdStationList[i].id : holdStationList[i].generateOnlineID();
+      element.innerHTML = (window.convention == "offlineConvention") ? holdStationList[i].id : holdStationList[i].onlineID();
       element.onmousedown = function() { window.update = false; };
       element.onmouseup = function() { window.update = true; };
       element.onmouseover = identifyStation;
