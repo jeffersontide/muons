@@ -6,7 +6,6 @@ function Detectors() {
    this.addDetector('tgc', 'TGC', '#ff9966', 'ms_single/tgccoords.txt');
    this.addDetector('rpc', 'RPC', '#cc00cc', 'ms_single/rpccoords.txt');
    this.addDetector('csc', 'CSC', '#00ff00', 'ms_single/csccoords.txt');
-   // this.addDetector('mdton', 'MDT Online', '#00ccff', 'ms_single/mdtoncoords.txt');
    this.addDetector('mdt', 'MDT', '#ffff4d', 'ms_single/mdtoffcoords.txt');
 }
 
@@ -84,7 +83,8 @@ function generateOnlineID() {
    // MDT & RPC
    if (this.detectorType.id == "mdt" || this.detectorType.id == "rpc") {
       var subtype = this.id.slice(3, 6);           // subtype (e.g., BMF)
-      var etaAbs = parseInt(this.id.slice(6,7));   // precedes A/B/C
+      var etaAbs = parseInt(this.id.slice(6,7));
+      var Z = this.id[7];                          // A, B, or C
       var phi = parseInt(this.id.slice(8,10));     // phi, usually (1..8)
 
       // for these subtypes, phi is encoded as an odd number
@@ -128,7 +128,7 @@ function generateOnlineID() {
       phi = (phi >= 10) ? phi.toString() : "0" + phi.toString();
 
       // clean up
-      this.onlineID_ = this.id.slice(0,6) + etaAbs + this.id[7] + phi;
+      this.onlineID_ = this.detectorType.id + subtype + etaAbs + Z + phi;
       return this.onlineID_;
 
    }
@@ -138,62 +138,67 @@ function generateOnlineID() {
       this.onlineID_ = this.id;
 
       // Pull out parameters
-      var subtype = this.id.slice(3, 5);  // T1, T2, T3, T4
-      var position = this.id[5];          // E or F
-      var eta = parseInt(this.id[6]);
-      var phi = parseInt(this.id.slice(8,10));
-      var phiSector = -1;
-      var phiSubsector = -1;
+      var subtype       = this.id.slice(3, 5);           // T1, T2, T3, T4
+      var position      = this.id[5];                    // E or F
+      var eta           = parseInt(this.id[6]);          // Abs value
+      var Z             = this.id[7];                    // A, B, or C
+      var phi           = parseInt(this.id.slice(8,10)); // single-index
+      var phiSector     = -1;                            // TBD
+      var phiSubsector  = -1;                            // TBD
 
       // Big wheel
       if (subtype == "T1" || subtype == "T2" || subtype == "T3") {
-         // this.onlineID_ = this.id.slice(0,3) + "M" + this.id.slice(4);
          subtype = "M" + subtype[1];
 
          if (position == "E") {
-            phiSector = Math.ceil(phi / 4); // 12 groups of 4
-            phiSubsector = phi - 4 * (phiSector - 1) - 1; // (0..3)
+            // 12 sectors of 4 (0..3)
+            phiSector = Math.ceil(phi / 4);
+            phiSubsector = phi - 4 * (phiSector - 1) - 1;
 
-            // Eta is flipped in online convention
+            // Eta is flipped in the online convention
             if (subtype == "M1") {
                eta = 5 - eta;
             }
             if (subtype == "M2" || subtype == "M3") {
                eta = 6 - eta;
             }
-
-            // this.onlineID_ = this.onlineID_.slice(0,6) + eta.toString() + this.onlineID_.slice(7);
          }
 
          if (position == "F") {
-            phiSector = Math.ceil(phi / 2); // 12 groups of 2
-            phiSubsector = (phi / 2 == Math.ceil(phi / 2)) ? 2 : 0; // {0, 2}
+            // 12 sectors of 2 ({0, 2})
+            phiSector = Math.ceil(phi / 2);
+            phiSubsector = (phi / 2 == Math.ceil(phi / 2)) ? 2 : 0;
          }
       }
 
+      // Small wheel
       if (subtype == "T4") {
-         // this.onlineID_ = this.onlineID_.slice(0,3) + "I" + this.onlineID_.slice(4);
-         subtype == "I4";
+         subtype = "I4";
 
          if (position == "E") {
-            // phi(1..21); re-index to (1..24)\{10, 18, 22}
-            if (phi > 19) { phi++; }
-            if (phi > 16) { phi++; }
-            if (phi > 9)  { phi++; }
+            // re-index from (1..21) to (1..24) \ {10, 18, 22}
+            if (phi > 9) { phi++; }
+            if (phi > 17) { phi++; }
+            if (phi > 21) { phi++; }
 
+            // 8 sectors of 3 (0..2)
             phiSector = Math.ceil(phi / 3);
-            phiSubsector = phi - 3 * (phiSector - 1) - 1; // 0-indexed
+            phiSubsector = phi - 3 * (phiSector - 1) - 1;
             phiSector = phiSector * 2 - 1;
          }
 
          if (position == "F") {
+            // Single-index; no subsectors
             phiSector = phi;
          }
       }
 
-      // Update phiSector
+      // Stringify what you need to
       phiSector = (phiSector > 9) ? phiSector.toString() : "0" + phiSector.toString();
-      this.onlineID_ = this.onlineID_.slice(0, -2) + phiSector;
+      eta = eta.toString()
+
+      // Put it all together
+      this.onlineID_ = "tgc" + subtype + position + eta + Z + phiSector;
 
       // Add phiSubsector if necessary
       if (phiSubsector >= 0) {
