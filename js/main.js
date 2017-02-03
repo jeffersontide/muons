@@ -597,7 +597,7 @@ function locateElement() {
       online = true;
    }
 
-   var match = false;
+   var noMatch = true;
 
    // Loop through all selected detectors
    var detectorList = Object.keys(window.detectors);
@@ -621,16 +621,15 @@ function locateElement() {
          }
 
          // A match!
-         match = re.test(stationID);
-         if (match) {
-            unholdStations();
+         if (re.test(stationID)) {
+            noMatch = false;
             holdStation(station);
          }
       }
    }
 
    // If no detectors were found, then make a noise
-   if (!match) {
+   if (noMatch) {
       alert('No matching elements found.\n' +
             '- Make sure the detector type and naming convention are selected.\n' +
             '- Try searching with wildcards (*) or a regular expression.');
