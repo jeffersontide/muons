@@ -19,6 +19,19 @@
 
 ## Log
 
+### R 2017-02-02
+
+#### done
+. capitalize detector names
+. csv for copying names
+. added not-very-helpful page on naming conventions
+. hold list now includes eta-phi coords, if they were specified
+. online search
+
+#### TODO
+. drop down geometry menu
+
+
 ### W 2017-02-01
 
 #### done

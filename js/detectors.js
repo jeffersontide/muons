@@ -202,7 +202,7 @@ function generateOnlineID() {
 
       // Add phiSubsector if necessary
       if (phiSubsector >= 0) {
-         this.onlineID_ += " (" + phiSubsector.toString() + ")";
+         this.onlineID_ += "_" + phiSubsector.toString();
       }
 
       return this.onlineID_;

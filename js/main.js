@@ -583,13 +583,21 @@ function locateElement() {
       return;
    }
 
+   // Wildcard or RegExp?
    var re;
-
    if (document.getElementById("regexpOption").checked) {
       re = new RegExp(str, 'i');
    } else {
       re = new RegExp(wildcardToRegexStr(str), 'i');
    }
+
+   // Online or offline?
+   var online = false;
+   if (window.convention == "onlineConvention") {
+      online = true;
+   }
+
+   var match = false;
 
    // Loop through all selected detectors
    var detectorList = Object.keys(window.detectors);
@@ -600,17 +608,32 @@ function locateElement() {
       if (!detector.selected) { continue; }
 
       var stationList = Object.keys(detector.stations);
-      var match = false;
 
       for (var j = 0; j < stationList.length; j++) {
-         var stationID = stationList[j];
+         // Online or offline?
+         var station = detector.stations[stationList[j]];
+         var stationID;
+
+         if (online) {
+            stationID = capitalizeDetector(station.onlineID());
+         } else {
+            stationID = capitalizeDetector(station.id);
+         }
+
+         // A match!
          match = re.test(stationID);
          if (match) {
-            // Hold the station
-            detector.stations[stationID].hold = true;
-            window.holdList.push(detector.stations[stationID]);
+            unholdStations();
+            holdStation(station);
          }
       }
+   }
+
+   // If no detectors were found, then make a noise
+   if (!match) {
+      alert('No matching elements found.\n' +
+            '- Make sure the detector type and naming convention are selected.\n' +
+            '- Try searching with wildcards (*) or a regular expression.');
    }
 
    updateDetectors();
@@ -697,6 +720,11 @@ function loadDetectorData(detectorID) {
 // Selecting stations //
 // ================== //
 
+// Transform strings: 'tgcT3F1C22' --> 'TGC_T3F1C22'
+function capitalizeDetector(inputStr) {
+   return inputStr.slice(0, 3).toUpperCase() + "_" + inputStr.slice(3);
+}
+
 function updateDetectors() {
    if (!window.update) {
       return;
@@ -728,7 +756,9 @@ function updateDetectors() {
       // Display hover stations in list
       var element = document.createElement('span');
       element.style.borderColor = hoverStationList[i].detectorType.color;
-      element.innerHTML = (window.convention == "offlineConvention") ? hoverStationList[i].id : hoverStationList[i].onlineID();
+      element.innerHTML = (window.convention == "offlineConvention") ?
+         capitalizeDetector(hoverStationList[i].id) :
+         capitalizeDetector(hoverStationList[i].onlineID());
       hoverElement.appendChild(element);
    }
 
@@ -754,7 +784,9 @@ function updateDetectors() {
       var element = document.createElement('span');
       element.style.borderColor = holdStationList[i].detectorType.color;
       element.id = holdStationList[i].id;
-      element.innerHTML = (window.convention == "offlineConvention") ? holdStationList[i].id : holdStationList[i].onlineID();
+      element.innerHTML = (window.convention == "offlineConvention") ?
+         capitalizeDetector(holdStationList[i].id) :
+         capitalizeDetector(holdStationList[i].onlineID());
       element.onmousedown = function() { window.update = false; };
       element.onmouseup = function() { window.update = true; };
       element.onmouseover = identifyStation;
@@ -883,7 +915,7 @@ function copyStations() {
    for (var i = 0; i < stationElements.length; i++) {
       stationList += stationElements[i].innerHTML;
       if (i < stationElements.length - 1) {
-         stationList += "\n";
+         stationList += ", ";
       }
    }
 

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <title>Naming Conventions</title>
+</head>
+
+<body style="width:600px; line-height: 20px;">
+
+<h1>Naming conventions for detector elements</h1><br/>
+
+Translating between online- and offline-convention names might be confusing, especially when searching for an element by ID. Try using wildcards (*) or regular expressions (if you dare!) to locate an element.
+
+<br/><br/>
+
+Below are some basic guidelines to the conventions.
+
+<h2>Offline convention</h2>
+
+An example "offline ID" might look like:<br/>
+<p style="font-size:22px; font-weight:bold;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TGC_T4F1C24</p>
+
+<ul>
+   <li><span style="font-size:18px; font-weight:bold;">TGC</span> refers to the detector type. Possible types include TGC (Thin Gap Chamber), RPC (...), CSC (...), and MDT (...). These are identified by the different colored rectangles on the plot.</li><br/>
+   <li><span style="font-size:18px; font-weight:bold;">T4F</span> identifies the class (???) of detector. It will usually be a 3-letter acronym like "BOS" or "CSL", which describes the location of the detector class.</li><br/>
+   <li><span style="font-size:18px; font-weight:bold;">1C</span> describes the eta (or z) position of the detector element: a smaller eta value will be closer to the interaction point. "A" refers to the +z side of the interaction point, and "C" refers to the -z side.</li><br/>
+   <li><span style="font-size:18px; font-weight:bold;">24</span> indicates the phi sector. The labelling for these sectors will vary between detector types. In the offline convention, elements are typically indexed by a single number (1-indexed) that increases counterclockwise from the +z direction, and begins at the +x axis.</li><br/>
+</ul>
+
+<h2>Online convention</h2>
+
+The online convention follows a similar format. The main differences are:
+
+<ul>
+   <li><span style="font-size:18px; font-weight:bold;">Phi sector.</span> This index is often counted in increments of 2, and may be odd or even depending on the detector type.
+      <ul>
+         <li>For most TGC's, the online convention specifies a separate "phi subsector" index, which is usually 0-indexed. This follows the element ID and an added underscore. E.g., the element <span style="font-weight:bold;">TGC_I4E1C05_0</span> is in the first subsector (index 0) within phi-sector 5.</li>
+      </ul></li>
+
+   <li><span style="font-size:18px; font-weight:bold;">Eta sector.</span>
+      <ul>
+         <li>For "BOF" and "BOG" classes of MDT's and RPC's, the eta index is again counted in increments of 2.</li>
+         <li>
+            The eta convention is flipped for some TGC's: T1E, T2E, T3E (online: M1E, M2E, and M3E respectively) elements begin with eta = 1 farthest away from the beamline. Eta increases as the elements approach the beamline.</li>
+      </ul>
+
+</ul>
+
+<br/>
+
+If you find an error in one of the names (or coordinates), or would simply like to provide feedback, please email the contact listed on the main page.
+
+</body>
+
+</html>
