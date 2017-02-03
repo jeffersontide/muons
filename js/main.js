@@ -35,8 +35,8 @@ function init() {
    document.getElementById("toggleAxes").onclick = toggleAxes;
 
    // Set up plot
-   window.etaAxis = new Axis('eta', -3.6, 3.6, 0.5, 'abs', '#000000', 'linear');
-   window.phiAxis = new Axis('phi', -3.6, 3.6, 0.5, 'abs', '#000000', 'linear');
+   window.etaAxis = new Axis('eta', -4.547, 4.379, 0.5, 'abs', '#000000', 'linear');
+   window.phiAxis = new Axis('phi', -4.517, 4.225, 0.5, 'abs', '#000000', 'linear');
    window.plot = new Plot("plotCanvas", "coordCanvas",
                           [window.etaAxis, window.phiAxis], "eta-phi", false,
                           [-3,-3]);
@@ -68,7 +68,7 @@ function init() {
    window.holdList = [];
 
    // Set up canvases
-   resizeCanvas(600, 400);
+   resizeCanvas(600, 507);
    document.getElementById("map").style.cursor = 'crosshair';
 }
 
