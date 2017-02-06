@@ -21,6 +21,9 @@ function init() {
    document.getElementById("selectAll").onclick = selectAll;
    document.getElementById("clr").onclick = clearDetectors;
 
+   document.getElementById("setImageURL").onclick = setImageURL;
+   document.getElementById("clearImageURL").onclick = clearPlotImage;
+
    document.getElementById("clearPlotImage").onclick = clearPlotImage;
    document.getElementById("imgInput").onchange = loadPlotImage;
    document.getElementById("clearPlotPDF").onclick = clearPlotPDF;
@@ -403,6 +406,12 @@ function loadPlotImage() {
    }
 
    reader.readAsDataURL(this.files[0]);
+}
+
+// Set a background image (from URL) for the plot
+function setImageURL() {
+   var url = document.getElementById("imageURL").value;
+   document.getElementById("foo").src = url;
 }
 
 // Clear background image for the plot

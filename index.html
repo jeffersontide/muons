@@ -139,15 +139,22 @@
       <div class="c2">
          <table>
             <tr>
+               <!-- get plot image from URL -->
+               <td>&nbsp;&nbsp;Image from URL:</td>
+               <td><input id="imageURL" value="https://atlasdqm.cern.ch/webdisplay/tier0/1/physics_Main/run_281411/run/MuonTracking/Shifter/Z/Muons_Z_eta_phi.png"></input></td>
+               <td><button id="setImageURL">Set Image</button></td>
+               <td><button id="clearImageURL">Clear Image</button></td>
+            </tr>
+            <tr>
                <!-- upload plot image -->
-               <td>&nbsp;&nbsp;Set background image:</td>
+               <td>&nbsp;&nbsp;Upload plot image:</td>
                <td><input type="file" id="imgInput" accept="image/*" data-type="image" /></td>
                <td></td>
                <td><button id="clearPlotImage">Clear Image</button></td>
             </tr>
             <tr>
                <!-- upload plot from pdf -->
-               <td>&nbsp;&nbsp;Set background PDF:</td>
+               <td>&nbsp;&nbsp;Upload plot PDF:</td>
                <td><input type="file" id="pdfInput" accept="application/pdf" /></td>
                <td>Page: <input id="pageNumber" style="width:50px;" value=1></input></td>
                <td><button id="clearPlotPDF">Clear PDF</button></td>
