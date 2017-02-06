@@ -81,6 +81,7 @@ Plot.prototype.drawAxes = function() {
    // Set draw settings
    context.strokeStyle = "#000000";
    context.lineWidth = 1;
+   context.font = "12px Verdana";
    context.textAlign = 'center';
    context.textBaseline = 'middle';
 
@@ -132,7 +133,7 @@ Plot.prototype.drawAxes = function() {
 
       // Draw tick label
       if (tick % ticksPerLabel == 0) {
-         context.fillText(unit, pos, this.canvas.height - this.centerPixel[1] + this.tickSize / 2 + 5);
+         context.fillText(unit, pos, this.canvas.height - this.centerPixel[1] + this.tickSize / 2 + 10);
          unit++;
       }
 
@@ -188,13 +189,28 @@ Plot.prototype.drawAxes = function() {
 
       // Draw tick label
       if (tick % ticksPerLabel == 0) {
-         context.fillText(unit, this.centerPixel[0] - this.tickSize / 2 - 5, pos);
+         context.fillText(unit, this.centerPixel[0] - this.tickSize / 2 - 10, pos);
          unit++;
       }
 
       pos -= incr;
       tick++;
    }
+
+   // Label axes
+   var spacing = this.tickSize * 3;
+
+   context.fillText(
+      "\u03b7", // unicode eta
+      this.canvas.width - spacing,
+      this.canvas.height - (this.centerPixel[1] - spacing)
+   );
+
+   context.fillText(
+      "\u03c6", // unicode phi
+      this.centerPixel[0] - spacing,
+      spacing
+   );
 }
 
 // this either
