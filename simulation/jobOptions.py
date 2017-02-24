@@ -14,20 +14,20 @@ DetFlags.Truth_setOn()
 from AthenaCommon.AthenaCommonFlags import athenaCommonFlags
 athenaCommonFlags.PoolEvgenInput.set_Off()
 athenaCommonFlags.PoolHitsOutput='hits.pool.root'
-athenaCommonFlags.EvtMax=1000000
+athenaCommonFlags.EvtMax = 1000
 athenaCommonFlags.SkipEvents=0
 
 from AthenaCommon.JobProperties import jobproperties
-jobproperties.Global.ConditionsTag = "OFLCOND-RUN12-SDR-22"
-jobproperties.Global.DetDescrVersion = "ATLAS-R2-2015-03-01-00"
+jobproperties.Global.ConditionsTag = "OFLCOND-MC16-SDR-16"
+jobproperties.Global.DetDescrVersion = "ATLAS-R2-2016-01-00-01"
 
 #--- Simulation flags -----------------------------------------
 from G4AtlasApps.SimFlags import SimFlags
 SimFlags.load_atlas_flags()
 SimFlags.SimLayout.set_On()
 SimFlags.RandomSvc = 'AtDSFMTGenSvc'
-#--- default(?) run2 layout
-SimFlags.SimLayout='ATLAS-R2-2015-03-01-00_VALIDATION' # specific value 
+
+SimFlags.SimLayout = "ATLAS-R2-2016-01-00-01_VALIDATION"
 SimFlags.RunNumber=222500
 SimFlags.ReleaseGeoModel=False
 
@@ -70,5 +70,8 @@ NSWPRDValAlg.doCSCHit = True
 #-----------------------------------------------------------------------------
 from GaudiSvc.GaudiSvcConf import THistSvc
 ServiceMgr += THistSvc()
-ServiceMgr.THistSvc.Output = [ "NSWPRDValAlg DATAFILE='" jobproperties.Global.DetDescrVersion "-ntuple.root' OPT='RECREATE'" ]
+
+geometry = jobproperties.Global.DetDescrVersion = "ATLAS-R2-2016-01-00-01"
+
+ServiceMgr.THistSvc.Output = [ "NSWPRDValAlg DATAFILE='geometries/" geometry "/" geometry "-ntuple.root' OPT='RECREATE'" ]
 
