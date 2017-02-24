@@ -3,10 +3,10 @@
 
 function Detectors() {
    // Add default detectors
-   this.addDetector('tgc', 'TGC', '#8888ff', 'ms_single/tgccoords.txt');
-   this.addDetector('rpc', 'RPC', '#cc00cc', 'ms_single/rpccoords.txt');
-   this.addDetector('csc', 'CSC', '#00ff00', 'ms_single/csccoords.txt');
-   this.addDetector('mdt', 'MDT', '#ff9966', 'ms_single/mdtoffcoords.txt');
+   this.addDetector('tgc', 'TGC', '#8888ff', 'geometries/ATLAS-R2-2015-03-01-00/tgccoords.txt');
+   this.addDetector('rpc', 'RPC', '#cc00cc', 'geometries/ATLAS-R2-2015-03-01-00/rpccoords.txt');
+   this.addDetector('csc', 'CSC', '#00ff00', 'geometries/ATLAS-R2-2015-03-01-00/csccoords.txt');
+   this.addDetector('mdt', 'MDT', '#ff9966', 'geometries/ATLAS-R2-2015-03-01-00/mdtoffcoords.txt');
 }
 
 Detectors.prototype.addDetector = function(id, name, color, path) {

@@ -95,7 +95,7 @@ class gun
   virtual void Loop ();
 };
 
-#endif
+#endif gun_h
 
 #ifdef gun_cxx
 gun::gun (TTree * tree)
@@ -229,4 +229,4 @@ gun::Notify ()
   return kTRUE;
 }
 
-#endif // #ifdef gun_cxx
+#endif // #ifndef gun_cxx
