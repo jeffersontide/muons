@@ -170,7 +170,7 @@ int coordinates(std::string ATLAS_VERSION)
    // belonging to each detector element.
 
    // Read in the TTree from myNtuple.root
-   TFile* f = TFile::Open("myNtuple.root");
+   TFile* f = TFile::Open("geometries" + ATLAS_VERSION + "/" + ATLAS_VERSION + "-ntuple.root");
    TTreeReader reader("NSWHitsTree", f);
 
    // Everything needed from the TTree
@@ -220,9 +220,7 @@ int coordinates(std::string ATLAS_VERSION)
    }
 
    // Random check
-   stations["RPCBML4C06"].print();
-
-   std::cout << "Number of entries: " << nEntries << std::endl;
+   // stations["RPCBML4C06"].print();
 
    // Close "myNtuple.root"
    f->Close();
