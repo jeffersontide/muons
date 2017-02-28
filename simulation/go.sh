@@ -67,5 +67,6 @@ athena.py jobOptions.py 2>&1 | tee log_${now}.txt
 rm -f AtDSFMTGenSvc.out PoolFileCatalog.xml PoolFileCatalog.xml.BAK SimParams.db eventLoopHeartBeat.txt hits.pool.root
 
 # process ntuple into coord text files
-root "coordinates.cpp(\"${geometry}\")"
-rm -f coordinates_*
+# root "coordinates.cpp(\"${geometry}\")"
+# .q
+# rm -f coordinates_*
