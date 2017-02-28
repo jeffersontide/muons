@@ -1,7 +1,3 @@
-#--- Define geometry ------------------------------------------
-detectorGeometry = "ATLAS-R2-2015-03-01-00"
-detectorTag = "OFLCOND-RUN12-SDR-22"
-
 #--- Algorithm sequence ---------------------------------------
 from AthenaCommon.AlgSequence import AlgSequence
 topSeq = AlgSequence()
@@ -22,8 +18,8 @@ athenaCommonFlags.EvtMax=200
 athenaCommonFlags.SkipEvents=0
 
 from AthenaCommon.JobProperties import jobproperties
-jobproperties.Global.ConditionsTag = detectorTag
-jobproperties.Global.DetDescrVersion = detectorGeometry
+jobproperties.Global.ConditionsTag = "OFLCOND-RUN12-SDR-22"
+jobproperties.Global.DetDescrVersion = "ATLAS-R2-2015-03-01-00"
 
 #--- Simulation flags -----------------------------------------
 from G4AtlasApps.SimFlags import SimFlags
@@ -31,7 +27,7 @@ SimFlags.load_atlas_flags()
 SimFlags.SimLayout.set_On()
 SimFlags.RandomSvc = 'AtDSFMTGenSvc'
 #--- default(?) run2 layout
-SimFlags.SimLayout=detectorGeometry + "_VALIDATION"
+SimFlags.SimLayout='ATLAS-R2-2015-03-01-00_VALIDATION' # specific value 
 SimFlags.RunNumber=222500
 SimFlags.ReleaseGeoModel=False
 
