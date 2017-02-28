@@ -76,5 +76,5 @@ NSWPRDValAlg.doCSCHit = True
 #-----------------------------------------------------------------------------
 from GaudiSvc.GaudiSvcConf import THistSvc
 ServiceMgr += THistSvc()
-ServiceMgr.THistSvc.Output = [ "NSWPRDValAlg DATAFILE='" + "geometries/" + geometry + "/" + geometry + "-ntuple.root' OPT='RECREATE'" ]
+ServiceMgr.THistSvc.Output = [ "NSWPRDValAlg DATAFILE='" + "geometries/" + detectorGeometry + "/" + detectorGeometry + "-ntuple.root' OPT='RECREATE'" ]
 
