@@ -30,26 +30,27 @@ if [ ! -f "jobOptions.py" ]; then
     scp -r ${USER}@lxplus.cern.ch:/afs/cern.ch/user/j/jomeyer/workarea/public/forDQcrew/sim.n.dump.jobOptions.py ./jobOptions.py
 fi
 
-# set options
+# set geometry options
 echo
 read -p "Geometry (default 'ATLAS-R2-2016-01-00-01'): " geometry
 geometry=${geometry:-"ATLAS-R2-2016-01-00-01"}
 echo
-
-read -p "Tag (default 'OFLCOND-MC16-SDR-16'): " tag
+read -p "Conditions tag (default 'OFLCOND-MC16-SDR-16'): " tag
 tag=${tag:-"OFLCOND-MC16-SDR-16"}
 echo
 
+# set geometry in jobOptions.py, which is a terrible way to do this
+sed -i "" "s|detectorGeometry = .*|detectorGeometry = \"${geometry}\"|g" jobOptions.py
+sed -i "" "s|detectorConditions =.*|detectorConditions = \"${tag}\"|g" jobOptions.py
+
+# set up directory for files with this geometry
+mkdir -p geometries/${geometry}
+
+# get/set number of events/particles
 read -p "Number of events (default 1000): " numEvents
 numEvents=${numEvents:-1000}
 echo
 
-# set geometry in jobOptions.py
-sed -i "" "s|jobproperties\.Global\.DetDescrVersion.*|jobproperties.Global.DetDescrVersion = \"${geometry}\"|g" jobOptions.py
-sed -i "" "s|SimFlags\.SimLayout[^.].*|SimFlags.SimLayout = \"${geometry}_VALIDATION\"|g" jobOptions.py
-sed -i "" "s|jobproperties\.Global\.ConditionsTag.*|jobproperties.Global.ConditionsTag = \"${tag}\"|g" jobOptions.py
-
-## set number of events in jobOptions.py
 sed -i "" "s|athenaCommonFlags\.EvtMax.*|athenaCommonFlags.EvtMax = ${numEvents}|g" jobOptions.py
 
 # run the code
@@ -59,7 +60,6 @@ athena.py sim.n.dump.jobOptions.py 2>&1 | tee log_${now}.txt
 # fuck athena
 rm -f AtDSFMTGenSvc.out PoolFileCatalog.xml PoolFileCatalog.xml.BAK SimParams.db eventLoopHeartBeat.txt hits.pool.root
 
-
-
-
-
+# process ntuple into coord text files
+root "coordinates.cpp(\"${geometry}\")"
+rm -f coordinates_*

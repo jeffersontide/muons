@@ -1,3 +1,7 @@
+#--- Define geometry ------------------------------------------
+detectorGeometry = "ATLAS-R2-2016-01-00-01"
+detectorConditions = "OFLCOND-MC16-SDR-16"
+
 #--- Algorithm sequence ---------------------------------------
 from AthenaCommon.AlgSequence import AlgSequence
 topSeq = AlgSequence()
@@ -18,8 +22,8 @@ athenaCommonFlags.EvtMax = 1000
 athenaCommonFlags.SkipEvents=0
 
 from AthenaCommon.JobProperties import jobproperties
-jobproperties.Global.ConditionsTag = "OFLCOND-MC16-SDR-16"
-jobproperties.Global.DetDescrVersion = "ATLAS-R2-2016-01-00-01"
+jobproperties.Global.ConditionsTag = detectorConditions
+jobproperties.Global.DetDescrVersion = detectorGeometry
 
 #--- Simulation flags -----------------------------------------
 from G4AtlasApps.SimFlags import SimFlags
@@ -27,7 +31,7 @@ SimFlags.load_atlas_flags()
 SimFlags.SimLayout.set_On()
 SimFlags.RandomSvc = 'AtDSFMTGenSvc'
 
-SimFlags.SimLayout = "ATLAS-R2-2016-01-00-01_VALIDATION"
+SimFlags.SimLayout = detectorGeometry + "_VALIDATION"
 SimFlags.RunNumber=222500
 SimFlags.ReleaseGeoModel=False
 
@@ -71,7 +75,6 @@ NSWPRDValAlg.doCSCHit = True
 from GaudiSvc.GaudiSvcConf import THistSvc
 ServiceMgr += THistSvc()
 
-geometry = jobproperties.Global.DetDescrVersion = "ATLAS-R2-2016-01-00-01"
+geometry ="ATLAS-R2-2016-01-00-01"
 
-ServiceMgr.THistSvc.Output = [ "NSWPRDValAlg DATAFILE='geometries/" geometry "/" geometry "-ntuple.root' OPT='RECREATE'" ]
-
+ServiceMgr.THistSvc.Output = [ "NSWPRDValAlg DATAFILE='geometries/" + detectorGeometry + "/" + detectorGeometry + "-ntuple.root' OPT='RECREATE'" ]
