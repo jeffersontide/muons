@@ -38,43 +38,12 @@ SimFlags.ReleaseGeoModel=False
 #--- ParticleGun ----------------------------------------------
 import ParticleGun as PG
 pg = PG.ParticleGun(randomSvcName=SimFlags.RandomSvc.get_Value(), randomStream="SINGLE")
-pg.samplers.append(PG.ParticleSampler())
-pg.samplers.append(PG.ParticleSampler())
-pg.samplers.append(PG.ParticleSampler())
-pg.samplers.append(PG.ParticleSampler())
-pg.samplers.append(PG.ParticleSampler())
-pg.samplers.append(PG.ParticleSampler())
-pg.samplers.append(PG.ParticleSampler())
-pg.samplers.append(PG.ParticleSampler())
-pg.samplers.append(PG.ParticleSampler())
-pg.samplers.append(PG.ParticleSampler())
-pg.samplers.append(PG.ParticleSampler())
+
 # phi=[-PG.PI, PG.PI])
 # pg.samplers[0].pid = (-13, 13)
 pg.samplers[0].pid = 999
 pg.samplers[0].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
-pg.samplers[1].pid = 999
-pg.samplers[1].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
-pg.samplers[2].pid = 999
-pg.samplers[2].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
-pg.samplers[3].pid = 999
-pg.samplers[3].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
-pg.samplers[4].pid = 999
-pg.samplers[4].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
-pg.samplers[5].pid = 999
-pg.samplers[5].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
-pg.samplers[6].pid = 999
-pg.samplers[6].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
-pg.samplers[7].pid = 999
-pg.samplers[7].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
-pg.samplers[8].pid = 999
-pg.samplers[8].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
-pg.samplers[9].pid = 999
-pg.samplers[9].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
-pg.samplers[10].pid = 999
-pg.samplers[10].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
-pg.samplers[11].pid = 999
-pg.samplers[11].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
+
 topSeq += pg
 
 #---  Output printout level ----------------------------------- 
