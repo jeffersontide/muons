@@ -42,8 +42,11 @@ echo "${tag}"
 echo
 
 # set geometry in jobOptions.py, which is a terrible way to do this
-sed "s|detectorGeometry[[:space:]]=.*|detectorGeometry = \"${geometry}\"|g" jobOptions.py > jobOptions2.py
-sed "s|detectorConditions[[:space:]]=.*|detectorConditions = \"${tag}\"|g" jobOptions.py > jobOptions2.py
+sed "s|detectorGeometry[[:space:]]*=.*|detectorGeometry = \"${geometry}\"|g" jobOptions.py > jobOptions2.py
+mv jobOptions2.py jobOptions.py
+
+sed "s|detectorConditions[[:space:]]*=.*|detectorConditions = \"${tag}\"|g" jobOptions.py > jobOptions2.py
+mv jobOptions2.py jobOptions.py
 
 # set up directory for files with this geometry
 mkdir -p geometries/${geometry}
@@ -54,6 +57,7 @@ numEvents=${numEvents:-1000}
 echo
 
 sed "s|athenaCommonFlags\.EvtMax.*|athenaCommonFlags.EvtMax = ${numEvents}|g" jobOptions.py > jobOptions2.py
+mv jobOptions2.py jobOptions.py
 
 # run the code
 now=$(date +%Y-%m-%d-%Hh%Mm%Ss)
