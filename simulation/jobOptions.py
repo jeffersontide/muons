@@ -1,6 +1,6 @@
 #--- Define geometry ------------------------------------------
-detectorGeometry = "ATLAS-R2-2016-01-00-01"
-detectorConditions = "OFLCOND-MC16-SDR-16"
+detectorGeometry = "ATLAS-R2-2015-03-01-00"
+detectorTag = "OFLCOND-RUN12-SDR-22"
 
 #--- Algorithm sequence ---------------------------------------
 from AthenaCommon.AlgSequence import AlgSequence
@@ -18,11 +18,11 @@ DetFlags.Truth_setOn()
 from AthenaCommon.AthenaCommonFlags import athenaCommonFlags
 athenaCommonFlags.PoolEvgenInput.set_Off()
 athenaCommonFlags.PoolHitsOutput='hits.pool.root'
-athenaCommonFlags.EvtMax = 1000
+athenaCommonFlags.EvtMax=200
 athenaCommonFlags.SkipEvents=0
 
 from AthenaCommon.JobProperties import jobproperties
-jobproperties.Global.ConditionsTag = detectorConditions
+jobproperties.Global.ConditionsTag = detectorTag
 jobproperties.Global.DetDescrVersion = detectorGeometry
 
 #--- Simulation flags -----------------------------------------
@@ -30,19 +30,51 @@ from G4AtlasApps.SimFlags import SimFlags
 SimFlags.load_atlas_flags()
 SimFlags.SimLayout.set_On()
 SimFlags.RandomSvc = 'AtDSFMTGenSvc'
-
-SimFlags.SimLayout = detectorGeometry + "_VALIDATION"
+#--- default(?) run2 layout
+SimFlags.SimLayout=detectorGeometry + "_VALIDATION"
 SimFlags.RunNumber=222500
 SimFlags.ReleaseGeoModel=False
 
 #--- ParticleGun ----------------------------------------------
 import ParticleGun as PG
 pg = PG.ParticleGun(randomSvcName=SimFlags.RandomSvc.get_Value(), randomStream="SINGLE")
-
+pg.samplers.append(PG.ParticleSampler())
+pg.samplers.append(PG.ParticleSampler())
+pg.samplers.append(PG.ParticleSampler())
+pg.samplers.append(PG.ParticleSampler())
+pg.samplers.append(PG.ParticleSampler())
+pg.samplers.append(PG.ParticleSampler())
+pg.samplers.append(PG.ParticleSampler())
+pg.samplers.append(PG.ParticleSampler())
+pg.samplers.append(PG.ParticleSampler())
+pg.samplers.append(PG.ParticleSampler())
+pg.samplers.append(PG.ParticleSampler())
 # phi=[-PG.PI, PG.PI])
 # pg.samplers[0].pid = (-13, 13)
 pg.samplers[0].pid = 999
 pg.samplers[0].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
+pg.samplers[1].pid = 999
+pg.samplers[1].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
+pg.samplers[2].pid = 999
+pg.samplers[2].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
+pg.samplers[3].pid = 999
+pg.samplers[3].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
+pg.samplers[4].pid = 999
+pg.samplers[4].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
+pg.samplers[5].pid = 999
+pg.samplers[5].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
+pg.samplers[6].pid = 999
+pg.samplers[6].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
+pg.samplers[7].pid = 999
+pg.samplers[7].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
+pg.samplers[8].pid = 999
+pg.samplers[8].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
+pg.samplers[9].pid = 999
+pg.samplers[9].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
+pg.samplers[10].pid = 999
+pg.samplers[10].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
+pg.samplers[11].pid = 999
+pg.samplers[11].mom = PG.PtEtaMPhiSampler(pt=75000, eta=[-3.,3.], phi=[-PG.PI, PG.PI])
 topSeq += pg
 
 #---  Output printout level ----------------------------------- 
@@ -74,5 +106,5 @@ NSWPRDValAlg.doCSCHit = True
 #-----------------------------------------------------------------------------
 from GaudiSvc.GaudiSvcConf import THistSvc
 ServiceMgr += THistSvc()
+ServiceMgr.THistSvc.Output = [ "NSWPRDValAlg DATAFILE='myNtuple.root' OPT='RECREATE'" ]
 
-ServiceMgr.THistSvc.Output = [ "NSWPRDValAlg DATAFILE='geometries/" + detectorGeometry + "/" + detectorGeometry + "-ntuple.root' OPT='RECREATE'" ]
