@@ -40,8 +40,8 @@ tag=${tag:-"OFLCOND-MC16-SDR-16"}
 echo
 
 # set geometry in jobOptions.py, which is a terrible way to do this
-sed -i "" "s|detectorGeometry = .*|detectorGeometry = \"${geometry}\"|g" jobOptions.py
-sed -i "" "s|detectorConditions =.*|detectorConditions = \"${tag}\"|g" jobOptions.py
+sed -i "" "s|detectorGeometry[[:space:]]=.*|detectorGeometry = \"${geometry}\"|g" jobOptions.py
+sed -i "" "s|detectorConditions[[:space:]]=.*|detectorConditions = \"${tag}\"|g" jobOptions.py
 
 # set up directory for files with this geometry
 mkdir -p geometries/${geometry}
