@@ -1,5 +1,6 @@
 detectorGeometry = "ATLAS-R2-2015-03-01-00"
 detectorTag = "OFLCOND-RUN12-SDR-22"
+numEvents = 200
 
 #--- Algorithm sequence ---------------------------------------
 from AthenaCommon.AlgSequence import AlgSequence
@@ -17,7 +18,7 @@ DetFlags.Truth_setOn()
 from AthenaCommon.AthenaCommonFlags import athenaCommonFlags
 athenaCommonFlags.PoolEvgenInput.set_Off()
 athenaCommonFlags.PoolHitsOutput='hits.pool.root'
-athenaCommonFlags.EvtMax=200
+athenaCommonFlags.EvtMax=numEvents
 athenaCommonFlags.SkipEvents=0
 
 from AthenaCommon.JobProperties import jobproperties
@@ -75,5 +76,5 @@ NSWPRDValAlg.doCSCHit = True
 #-----------------------------------------------------------------------------
 from GaudiSvc.GaudiSvcConf import THistSvc
 ServiceMgr += THistSvc()
-ServiceMgr.THistSvc.Output = [ "NSWPRDValAlg DATAFILE='myNtuple.root' OPT='RECREATE'" ]
+ServiceMgr.THistSvc.Output = [ "NSWPRDValAlg DATAFILE='" + geometry + "/" + geometry + "-ntuple.root' OPT='RECREATE'" ]
 
