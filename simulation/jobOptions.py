@@ -75,6 +75,4 @@ NSWPRDValAlg.doCSCHit = True
 from GaudiSvc.GaudiSvcConf import THistSvc
 ServiceMgr += THistSvc()
 
-geometry ="ATLAS-R2-2016-01-00-01"
-
 ServiceMgr.THistSvc.Output = [ "NSWPRDValAlg DATAFILE='geometries/" + detectorGeometry + "/" + detectorGeometry + "-ntuple.root' OPT='RECREATE'" ]
