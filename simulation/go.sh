@@ -34,9 +34,11 @@ fi
 echo
 read -p "Geometry (default 'ATLAS-R2-2016-01-00-01'): " geometry
 geometry=${geometry:-"ATLAS-R2-2016-01-00-01"}
+echo "${geometry}"
 echo
 read -p "Conditions tag (default 'OFLCOND-MC16-SDR-16'): " tag
 tag=${tag:-"OFLCOND-MC16-SDR-16"}
+echo "${tag}"
 echo
 
 # set geometry in jobOptions.py, which is a terrible way to do this
@@ -51,7 +53,7 @@ read -p "Number of events (default 1000): " numEvents
 numEvents=${numEvents:-1000}
 echo
 
-sed -i "" "s|athenaCommonFlags\.EvtMax.*|athenaCommonFlags.EvtMax = ${numEvents}|g" jobOptions.py
+sed "s|athenaCommonFlags\.EvtMax.*|athenaCommonFlags.EvtMax = ${numEvents}|g" jobOptions.py > jobOptions2.py & mv jobOptions2.py jobOptions.py
 
 # run the code
 now=$(date +%Y-%m-%d-%Hh%Mm%Ss)
