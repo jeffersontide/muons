@@ -219,9 +219,9 @@ int coordinates(std::string ATLAS_VERSION)
       processBranch(stations, "TGC", TGC_NAME_, TGC_ETA_, TGC_PHI_, TGC_X_, TGC_Y_, TGC_Z_);
 
       // Just do a few entries for now...
-      if (nEntries++ >= 10) {
-         break;
-      }
+      // if (nEntries++ >= 10) {
+      //    break;
+      // }
    }
 
    // Random check

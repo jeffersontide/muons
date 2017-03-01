@@ -65,9 +65,10 @@ function init() {
    window.mouse.parent.onmouseout = mouseoutCallback;
 
    // Detector structure to hold data, adds detector buttons by default
-   window.detectors = new Detectors();
+   window.geometry = "ATLAS-R2-2015-03-01-00";
+   window.detectors = new Detectors(window.geometry);
 
-   // Held stations, terrible
+   // Held stations, #terriblehorriblenogoodverybad
    window.holdList = [];
 
    // Set up canvases
@@ -684,7 +685,7 @@ function locateElementsByCoord() {
    updateDetectors();
 }
 
-// Some of these shouldn't be global
+// #terriblehorriblenogoodverybad
 function loadDetectorData(detectorID) {
    var xhr = new XMLHttpRequest();
 
@@ -820,9 +821,9 @@ function findStations(x, y) {
 
             var hoverBool = (
                 x >= station.coords[0] &&
-                y <= station.coords[1] &&
+                y >= station.coords[1] &&
                 x <= station.coords[2] &&
-                y >= station.coords[3]
+                y <= station.coords[3]
             );
 
             if (hoverBool) {

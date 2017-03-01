@@ -1,12 +1,12 @@
 // detectors.js
 // an abomination I will eventually fix
 
-function Detectors() {
+function Detectors(geometry) {
    // Add default detectors
-   this.addDetector('tgc', 'TGC', '#8888ff', 'geometries/ATLAS-R2-2015-03-01-00/tgccoords.txt');
-   this.addDetector('rpc', 'RPC', '#cc00cc', 'geometries/ATLAS-R2-2015-03-01-00/rpccoords.txt');
-   this.addDetector('csc', 'CSC', '#00ff00', 'geometries/ATLAS-R2-2015-03-01-00/csccoords.txt');
-   this.addDetector('mdt', 'MDT', '#ff9966', 'geometries/ATLAS-R2-2015-03-01-00/mdtoffcoords.txt');
+   this.addDetector('tgc', 'TGC', '#8888ff', 'simulation/geometries/' + geometry + '/tgccoords.txt');
+   this.addDetector('rpc', 'RPC', '#cc00cc', 'simulation/geometries/' + geometry + '/rpccoords.txt');
+   this.addDetector('csc', 'CSC', '#00ff00', 'simulation/geometries/' + geometry + '/csccoords.txt');
+   this.addDetector('mdt', 'MDT', '#ff9966', 'simulation/geometries/' + geometry + '/mdtcoords.txt');
 }
 
 Detectors.prototype.addDetector = function(id, name, color, path) {

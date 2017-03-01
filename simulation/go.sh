@@ -66,7 +66,6 @@ sed "s/^numEvents.*/numEvents = ${numEvents}/g" jobOptions.py > jobOptions2.py
 mv jobOptions2.py jobOptions.py
 
 # set up directory for files with this geometry
-mkdir -p geometries
 mkdir -p geometries/${geometry}
 
 # run the code
