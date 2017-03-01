@@ -54,7 +54,7 @@ numEvents=${numEvents:-1000}
 echo "${numEvents}"
 echo
 
-# set options in jobOptions.py
+# set options in jobOptions.py #terriblehorriblenogoodverybad
 sed "s/^detectorGeometry.*/detectorGeometry = \"${geometry}\"/g" jobOptions.py > jobOptions2.py
 mv jobOptions2.py jobOptions.py
 
@@ -75,6 +75,5 @@ athena.py jobOptions.py 2>&1 | tee log_${now}.txt
 rm -f AtDSFMTGenSvc.out PoolFileCatalog.xml PoolFileCatalog.xml.BAK SimParams.db eventLoopHeartBeat.txt hits.pool.root
 
 # process ntuple into coord text files
-# root "coordinates.cpp(\"${geometry}\")"
-# .q
-# rm -f coordinates_*
+#root "coordinates.cpp(\"${geometry}\")"
+#rm -f coordinates_*
