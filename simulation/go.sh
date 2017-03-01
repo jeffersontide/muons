@@ -47,7 +47,7 @@ mv jobOptions2.py jobOptions.py
 sed "s/^detectorTag.*/detectorTag = \"${tag}\"/g" jobOptions.py > jobOptions2.py
 mv jobOptions2.py jobOptions.py
 
-sed "s/^numEvents.*/numEvents = \"${numEvents}\"/g" jobOptions.py > jobOptions2.py
+sed "s/^numEvents.*/numEvents = ${numEvents}/g" jobOptions.py > jobOptions2.py
 mv jobOptions2.py jobOptions.py
 
 #echo
