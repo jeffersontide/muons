@@ -1,6 +1,11 @@
 # rm previous logs
 rm -f log_*
 
+# set up root 6
+#    following https://root.cern.ch/content/release-60606
+. /afs/cern.ch/sw/lcg/external/gcc/4.9/x86_64-slc6-gcc49-opt/setup.sh
+. /afs/cern.ch/sw/lcg/app/releases/ROOT/6.06.06/x86_64-slc6-gcc49-opt/root/bin/thisroot.sh
+
 # set up the atlas environment, if necessary
 if [ -z "$AtlasVersion" ]; then
     asetup 20.7.6.4,here
@@ -36,10 +41,6 @@ fi
 #scp -r ${USER}@lxplus.cern.ch:/afs/cern.ch/user/l/laniu/public/jobOptions.py jobOptions.py
 
 # get options
-#geometry="ATLAS-R2-2015-03-01-00"
-#tag="OFLCOND-RUN12-SDR-22"
-#numEvents=1000
-
 echo
 read -p "Geometry (default 'ATLAS-R2-2015-03-01-00'): " geometry
 geometry=${geometry:-"ATLAS-R2-2015-03-01-00"}
@@ -76,4 +77,4 @@ rm -f AtDSFMTGenSvc.out PoolFileCatalog.xml PoolFileCatalog.xml.BAK SimParams.db
 
 # process ntuple into coord text files
 root "coordinates.cpp(\"${geometry}\")"
-#rm -f coordinates_*
+rm -f coordinates_*
