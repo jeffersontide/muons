@@ -36,9 +36,23 @@ fi
 #scp -r ${USER}@lxplus.cern.ch:/afs/cern.ch/user/l/laniu/public/jobOptions.py jobOptions.py
 
 # get options
-geometry="ATLAS-R2-2015-03-01-00"
-tag="OFLCOND-RUN12-SDR-22"
-numEvents=1000
+#geometry="ATLAS-R2-2015-03-01-00"
+#tag="OFLCOND-RUN12-SDR-22"
+#numEvents=1000
+
+echo
+read -p "Geometry (default 'ATLAS-R2-2015-03-01-00'): " geometry
+geometry=${geometry:-"ATLAS-R2-2015-03-01-00"}
+echo "${geometry}"
+echo
+read -p "Conditions tag (default 'OFLCOND-RUN12-SDR-22'): " tag
+tag=${tag:-"OFLCOND-RUN12-SDR-22"}
+echo "${tag}"
+echo
+read -p "Number of events (default 1000): " numEvents
+numEvents=${numEvents:-1000}
+echo "${numEvents}"
+echo
 
 # set options in jobOptions.py
 sed "s/^detectorGeometry.*/detectorGeometry = \"${geometry}\"/g" jobOptions.py > jobOptions2.py
@@ -50,33 +64,8 @@ mv jobOptions2.py jobOptions.py
 sed "s/^numEvents.*/numEvents = ${numEvents}/g" jobOptions.py > jobOptions2.py
 mv jobOptions2.py jobOptions.py
 
-#echo
-#read -p "Geometry (default 'ATLAS-R2-2016-01-00-01'): " geometry
-#geometry=${geometry:-"ATLAS-R2-2016-01-00-01"}
-#echo "${geometry}"
-#echo
-#read -p "Conditions tag (default 'OFLCOND-MC16-SDR-16'): " tag
-#tag=${tag:-"OFLCOND-MC16-SDR-16"}
-#echo "${tag}"
-#echo
-#
-## set geometry in jobOptions.py, which is a terrible way to do this
-#sed "s|detectorGeometry[[:space:]]*=.*|detectorGeometry = \"${geometry}\"|g" jobOptions.py > jobOptions2.py
-#mv jobOptions2.py jobOptions.py
-#
-#sed "s|detectorConditions[[:space:]]*=.*|detectorConditions = \"${tag}\"|g" jobOptions.py > jobOptions2.py
-#mv jobOptions2.py jobOptions.py
-
 # set up directory for files with this geometry
-#mkdir -p geometries/${geometry}
-#
-## get/set number of events/particles
-#read -p "Number of events (default 1000): " numEvents
-#numEvents=${numEvents:-1000}
-#echo
-#
-#sed "s|athenaCommonFlags\.EvtMax.*|athenaCommonFlags.EvtMax = ${numEvents}|g" jobOptions.py > jobOptions2.py
-#mv jobOptions2.py jobOptions.py
+mkdir -p geometries/${geometry}
 
 # run the code
 now=$(date +%Y-%m-%d-%Hh%Mm%Ss)
