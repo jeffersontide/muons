@@ -1,3 +1,6 @@
+# rm previous logs
+rm -f log_*
+
 # set up the atlas environment, if necessary
 if [ -z "$AtlasVersion" ]; then
     asetup 20.7.6.4,here
@@ -26,11 +29,27 @@ fi
 
 # get the file, if necessary
 
-if [ ! -f "jobOptions.py" ]; then
-    scp -r ${USER}@lxplus.cern.ch:/afs/cern.ch/user/j/jomeyer/workarea/public/forDQcrew/sim.n.dump.jobOptions.py jobOptions.py
-fi
+#if [ ! -f "jobOptions.py" ]; then
+#    scp -r ${USER}@lxplus.cern.ch:/afs/cern.ch/user/j/jomeyer/workarea/public/forDQcrew/sim.n.dump.jobOptions.py jobOptions.py
+#fi
 
-# set geometry options
+#scp -r ${USER}@lxplus.cern.ch:/afs/cern.ch/user/l/laniu/public/jobOptions.py jobOptions.py
+
+# get options
+geometry="ATLAS-R2-2015-03-01-00"
+tag="OFLCOND-RUN12-SDR-22"
+numEvents=1000
+
+# set options in jobOptions.py
+sed "s/^detectorGeometry.*/detectorGeometry = \"${geometry}\"/g" jobOptions.py > jobOptions2.py
+mv jobOptions2.py jobOptions.py
+
+sed "s/^detectorTag.*/detectorTag = \"${tag}\"/g" jobOptions.py > jobOptions2.py
+mv jobOptions2.py jobOptions.py
+
+sed "s/^numEvents.*/numEvents = \"${numEvents}\"/g" jobOptions.py > jobOptions2.py
+mv jobOptions2.py jobOptions.py
+
 #echo
 #read -p "Geometry (default 'ATLAS-R2-2016-01-00-01'): " geometry
 #geometry=${geometry:-"ATLAS-R2-2016-01-00-01"}

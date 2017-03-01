@@ -12,6 +12,8 @@
 #include "TTreeReader.h"
 #include "TTreeReaderValue.h"
 
+// Chamber
+//    basic struct to keep track of hits for each chamber
 struct Chamber
 {
    double eta_min = 10.0;
@@ -47,11 +49,13 @@ struct Chamber
 
 // parseStationID
 //    all aboard the jankmobile
+//
 // args:
 //    std::string type     "CSC" / "MDT" / "RPC" / "TGC"
 //    std::string group    "BIL", "BMG", etc.
 //    int eta              +/- integer representing eta sector for chamber group
 //    int phi              + integer representing phi sector for chamber group
+//
 // return:
 //    std::string          e.g., "MDTBIL1A01"
 std::string parseStationID(std::string type, std::string group, int eta, int phi) {
