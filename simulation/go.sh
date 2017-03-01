@@ -66,6 +66,7 @@ sed "s/^numEvents.*/numEvents = ${numEvents}/g" jobOptions.py > jobOptions2.py
 mv jobOptions2.py jobOptions.py
 
 # set up directory for files with this geometry
+mkdir -p geometries
 mkdir -p geometries/${geometry}
 
 # run the code
@@ -77,4 +78,5 @@ rm -f AtDSFMTGenSvc.out PoolFileCatalog.xml PoolFileCatalog.xml.BAK SimParams.db
 
 # process ntuple into coord text files
 root "coordinates.cpp(\"${geometry}\")"
+.q
 rm -f coordinates_*

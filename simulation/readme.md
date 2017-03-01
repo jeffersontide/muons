@@ -2,14 +2,14 @@
 
 ## List of stations
 
-* All stations, as far as I know, are contained in the XML file /1.parsing_ms_xml/IdDictMuonSpectrometer_R.03.xml . Sara wrote a python script to parse this XML file and output a list of stations, with columns identifying 
+* All stations, as far as I know, are contained in the XML file `stations/IdDictMuonSpectrometer_R.03.xml`. Sara wrote a python script (`parseXML.py`) to parse this XML file and output a list of stations, with columns identifying 
 
    1) their detector type (MDT, CSC, etc.)
-   2) their chamber class (BIL, BMG, etc.)
+   2) their chamber name (BIL, BMG, etc.)
    3) their eta coordinate (+/- integer)
    4) their phi coordinate (+ integer)
 
-   This is stored in the text file /1.parsing_ms_xml/stations.txt . I will write another parser later.
+   This is stored in the text file `stations/stations.txt`.
 
 
 ## Generate eta-phi coordinates for new ATLAS geometries
