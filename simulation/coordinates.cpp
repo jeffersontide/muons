@@ -174,8 +174,7 @@ int coordinates(std::string ATLAS_VERSION)
    // belonging to each detector element.
 
    // Read in the TTree from myNtuple.root
-   std::string filename = "geometries/" + ATLAS_VERSION + "/" + ATLAS_VERSION + "-ntuple.root";
-   TFile* f = TFile::Open(filename.c_str());
+   TFile* f = TFile::Open("geometries/" + ATLAS_VERSION + "/" + ATLAS_VERSION + "-ntuple.root");
    TTreeReader reader("NSWHitsTree", f);
 
    // Everything needed from the TTree
