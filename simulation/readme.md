@@ -9,14 +9,14 @@
    3) their eta coordinate (+/- integer)
    4) their phi coordinate (+ integer)
 
-   This is stored in the text file `stations/stations.txt`.
+   This is stored in the text file `stations/stations.txt`, which is accessed by `coordinates.cpp` later. The script is also set to remove any duplicate rows.
 
 
 ## Generate eta-phi coordinates for new ATLAS geometries
 
 ### Set up & run the particle gun
 
-1. Run 'go.sh', which will set up everything necessary to run the simulation
+1. Run `go.sh`, which will set up and run the simulation
 
 2. Enter the desired ATLAS geometry, conditions tag, and number of events.
 
